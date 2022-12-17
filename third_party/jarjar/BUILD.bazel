@@ -1,0 +1,5 @@
+filegroup(
+    name = "jarjar_command_deploy.jar",
+    srcs = ["jarjar_command_deploy.6.0.0-pre.20220520.1.jar"],
+    visibility = ["//java/com/google/testing/coverage:__pkg__"],
+)

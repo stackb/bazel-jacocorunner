@@ -1,0 +1,71 @@
+# Bazel custom Jacoco runner used to provide proper initialization and lcov
+# report generation when using offline Jacoco instrumentation.
+# This target should not be used as a dependency (except when writing tests for
+# it).
+#
+# An implicit dependency of all "java_binary" rules.
+java_binary(
+    name = "JacocoCoverage",
+    srcs = ["JacocoCoverageRunner.java"],
+    deps = [
+        ":JacocoCoverageLib",
+        ":bitfield",
+        "@maven//:com_google_guava_guava",
+        "@maven//:org_jacoco_org_jacoco_agent",
+        "@maven//:org_jacoco_org_jacoco_core",
+        "@maven//:org_jacoco_org_jacoco_report",
+        "@org_jacoco_org_jacoco_agent_0_8_6_org_jacoco_agent_0_8_6_runtime_jar//jar",
+    ],
+)
+
+java_library(
+    name = "JacocoCoverageLib",
+    srcs = [
+        "BranchCoverageDetail.java",
+        "BranchDetailAnalyzer.java",
+        "BranchExp.java",
+        "ClassProbesMapper.java",
+        "CovExp.java",
+        "JacocoLCOVFormatter.java",
+        "MethodProbesMapper.java",
+        "ProbeExp.java",
+    ],
+    deps = [
+        ":bitfield",
+        "@maven//:com_google_guava_guava",
+        "@maven//:org_jacoco_org_jacoco_core",
+        "@maven//:org_jacoco_org_jacoco_report",
+        "@maven//:org_ow2_asm_asm",
+        "@maven//:org_ow2_asm_asm_tree",
+    ],
+)
+
+java_library(
+    name = "bitfield",
+    srcs = [
+        "BitField.java",
+        "IllegalStringException.java",
+    ],
+)
+
+genrule(
+    name = "Jacoco_jarjar",
+    srcs = [
+        ":JacocoCoverage_deploy.jar",
+        ":JacocoCoverage.jarjar",
+    ],
+    outs = ["JacocoCoverage_jarjar_deploy.jar"],
+    cmd = "\n".join([
+        "JARJAR=\"$$(mktemp -t bazel.XXXXXXXX)\"",
+        "\"$(JAVA)\" -jar \"$(location //third_party/jarjar:jarjar_command_deploy.jar)\" process \"$(location :JacocoCoverage.jarjar)\" \"$(location :JacocoCoverage_deploy.jar)\" \"$${JARJAR}\"",
+        "\"$(location @bazel_tools//tools/jdk:singlejar)\" --normalize --sources \"$${JARJAR}\" --output \"$@\"",
+        "rm -fr \"$${JARJAR}\"",
+    ]),
+    tags = ["manual"],
+    toolchains = ["@bazel_tools//tools/jdk:current_host_java_runtime"],
+    tools = [
+        "//third_party/jarjar:jarjar_command_deploy.jar",
+        "@bazel_tools//tools/jdk:current_host_java_runtime",
+        "@bazel_tools//tools/jdk:singlejar",
+    ],
+)

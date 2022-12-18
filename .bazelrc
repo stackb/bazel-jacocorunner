@@ -10,3 +10,8 @@ build --java_language_version=17
 build --tool_java_language_version=17
 build --java_runtime_version=remotejdk_17
 build --tool_java_runtime_version=remotejdk_17
+
+# ----------------------------------------------
+# coverage/genhtml configuration
+# ----------------------------------------------
+#common --override_repository=coverage=/private/var/tmp/_bazel_pcj/d5bdb7bc740f5085f383a8007ffa3472/execroot/build_stack_rules_scala_coverage/bazel-out/_coverage/

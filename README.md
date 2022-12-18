@@ -5,6 +5,7 @@
 
 - [rules\_scala\_coverage](#rules_scala_coverage)
   - [What is this?](#what-is-this)
+  - [Links](#links)
 
 ## What is this?
 
@@ -22,5 +23,13 @@
 - A set of examples, shamelessly copied from
   https://github.com/gergelyfabian/bazel-scala-example, which serves as a
   test-base so we can check that things are working.
+- A `coverage.sh` script that runs `bazel coverage` and then performs
+  lcov/genhtml post-processing on the combined `_coverage_report.dat`.  The
+  final generated report HTML files are packed as a [redbean
+  app](https://redbean.dev/) (fancy zip file) for easy serving.
 - A CI job (github actions) that runs the tests on new PRs and the `master`
   branch.
+
+## Links
+
+- https://www.youtube.com/watch?v=P51Rgcbxhyk

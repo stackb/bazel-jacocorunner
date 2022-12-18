@@ -1,12 +1,10 @@
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_jar")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file", "http_jar")
 
 def _maybe(repo_rule, name, **kwargs):
     if name not in native.existing_rules():
         repo_rule(name = name, **kwargs)
 
 def repositories():
-    pass
-
     apache_maven()
     rules_jvm_external()
     org_jacoco_org_jacoco_agent_0_8_6_org_jacoco_agent_0_8_6_runtime_jar()
@@ -14,6 +12,11 @@ def repositories():
     com_google_protobuf()
     rules_python()
     zlib()
+
+def lcov_repositories():
+    linux_test_project_lcov()
+    rules_perl()
+    redbean_dev_redbean()
 
 def rules_jvm_external():
     _maybe(
@@ -100,4 +103,49 @@ def zlib():
             "https://mirror.bazel.build/zlib.net/zlib-1.2.11.tar.gz",
             "https://zlib.net/zlib-1.2.11.tar.gz",
         ],
+    )
+
+def linux_test_project_lcov():
+    _maybe(
+        http_archive,
+        name = "linux_test_project_lcov",
+        sha256 = "02eece2802697c079ff51ce056b0a6691020f21082c46ccfe6604bbfd06d7937",
+        strip_prefix = "lcov-1.16/bin",
+        url = "https://github.com/linux-test-project/lcov/archive/refs/tags/v1.16.tar.gz",
+        build_file_content = """
+load("@rules_perl//perl:perl.bzl", "perl_binary")
+
+perl_binary(
+    name = "genhtml_bin",
+    srcs = ["genhtml"],
+    data = ["get_version.sh"],
+    visibility = ["//visibility:public"],
+)
+""",
+    )
+
+def rules_perl():
+    # Commit: 0947461daa8c42a600878251ab243accc4762e0b
+    # Date: 2022-12-18 04:56:28 +0000 UTC
+    # URL: https://github.com/pcj/rules_perl/commit/0947461daa8c42a600878251ab243accc4762e0b
+    #
+    # fix darwin toolchain - try 1
+    # Size: 34710 (35 kB)
+    _maybe(
+        http_archive,
+        name = "rules_perl",
+        sha256 = "3c5e4715fc07a7dc582bb2b1c24a1d70e4652e8aa81aa01e7ebdc25f243845fe",
+        strip_prefix = "rules_perl-0947461daa8c42a600878251ab243accc4762e0b",
+        urls = ["https://github.com/pcj/rules_perl/archive/0947461daa8c42a600878251ab243accc4762e0b.tar.gz"],
+    )
+
+def redbean_dev_redbean():
+    # HTTP/1.1 200 OK
+    # Last-Modified: Wed, 02 Nov 2022 16:41:11 GMT
+    # Server: redbean/2.2.0
+    # Size: 2314466 (2.3 MB)
+    http_file(
+        name = "redbean_dev_redbean",
+        sha256 = "db8fc7cc5a7703b7ccb830a366eb69e728fc7892fd3ecc093c089d837aa5b91b",
+        urls = ["https://redbean.dev/redbean-2.2.com"],
     )

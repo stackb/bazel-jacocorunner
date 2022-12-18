@@ -1,0 +1,32 @@
+diff --git a/jacoco/pom.xml b/jacoco/pom.xml
+index 50621f30..a4455d79 100644
+--- a/jacoco/pom.xml
++++ b/jacoco/pom.xml
+@@ -60,18 +60,6 @@
+       <version>${project.version}</version>
+       <classifier>nodeps</classifier>
+     </dependency>
+-    <dependency>
+-      <groupId>${project.groupId}</groupId>
+-      <artifactId>org.jacoco.examples</artifactId>
+-      <version>${project.version}</version>
+-      <type>zip</type>
+-    </dependency>
+-    <dependency>
+-      <groupId>${project.groupId}</groupId>
+-      <artifactId>org.jacoco.doc</artifactId>
+-      <version>${project.version}</version>
+-      <classifier>javadoc</classifier>
+-    </dependency>
+   </dependencies>
+ 
+   <build>
+@@ -112,7 +100,7 @@
+               <rules>
+                 <requireFilesSize>
+                   <maxsize>5500000</maxsize>
+-                  <minsize>3400000</minsize>
++                  <minsize>2000000</minsize>
+                   <files>
+                     <file>${project.build.directory}/jacoco-${qualified.bundle.version}.zip</file>
+                   </files>

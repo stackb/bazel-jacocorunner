@@ -4,34 +4,23 @@
 # rules_scala_coverage
 
 - [rules\_scala\_coverage](#rules_scala_coverage)
-  - [Overview](#overview)
-  - [Configuration](#configuration)
-  - [How Coverage Works](#how-coverage-works)
-  - [Configuration of Coverage](#configuration-of-coverage)
-  - [Bazel Flags Related to Coverage](#bazel-flags-related-to-coverage)
+  - [What is this?](#what-is-this)
 
-## Overview
+## What is this?
 
-Getting coverage to work with
-[rules_scala](https://github.com/bazelbuild/rules_scala) was no easy task.  I
-put this repository together to possibly make it easier for others to get
-coverage working.
-
-I (@pcj) consider myself a bazel coverage noob, so this is also largely just to
-codify knowledge that I will inevitably soon forget (again).
-
-## Configuration
-
-The [jacoco](https://github.com/jacoco/jacoco) library is used to assist 
-
-## How Coverage Works
-
-TODO
-
-## Configuration of Coverage
-
-TODO
-
-## Bazel Flags Related to Coverage
-
-TODO
+- Bazel's [`jacocorunner` source
+  code](https://github.com/bazelbuild/bazel/blob/master/src/java_tools/junitrunner/java/com/google/testing/coverage/BUILD),
+  copied here so we can more easily build it outside of bazel itself using
+  different jacoco jar dependencies.
+  (`//java/com/google/testing/coverage:Jacoco_jarjar`).
+- A custom http_archive rule that downloads @gergelyfabian's [scala-improved
+  fork of jacoco](https://github.com/gergelyfabian/jacoco), builds it with
+  `mvn`, and exposes the maven artifacts as deps (`jacoco_http_archive`).
+- A `default_java_toolchain` that consumes this custom jacocorunner, which could
+  be used directly but more likely serves as an example.
+- A `scala_toolchain` and `scala_test_toolchain`.
+- A set of examples, shamelessly copied from
+  https://github.com/gergelyfabian/bazel-scala-example, which serves as a
+  test-base so we can check that things are working.
+- A CI job (github actions) that runs the tests on new PRs and the `master`
+  branch.

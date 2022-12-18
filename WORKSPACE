@@ -4,6 +4,7 @@ workspace(name = "build_stack_rules_scala_coverage")
 # default workspace dependencies
 # --------------------------------------------------
 
+load("//:versions.bzl", "versions")
 load("//:repositories.bzl", "repositories")
 
 repositories()
@@ -21,28 +22,26 @@ load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
 rules_jvm_external_setup()
 
 # --------------------------------------------------
-# @maven
+# maven deps
 # --------------------------------------------------
 
-load("@rules_jvm_external//:defs.bzl", "maven_install")
+load("//:maven_repositories.bzl", "maven_repositories")
 
-maven_install(
-    artifacts = [
-        "com.google.guava:guava:31.1-jre",
-        "org.jacoco:org.jacoco.agent:0.8.6",  # TODO(pcj): how to get the -runtime.jar also?
-        "org.jacoco:org.jacoco.core:0.8.6",
-        "org.jacoco:org.jacoco.report:0.8.6",
-    ],
-    maven_install_json = "//:maven_install.json",
-    repositories = [
-        "https://repo1.maven.org/maven2",
-        "https://repo.maven.apache.org/maven2",
-    ],
+maven_repositories()
+
+load(
+    "@jacoco_maven//:defs.bzl",
+    jacoco_pinned_maven_install = "pinned_maven_install",
 )
 
-load("@maven//:defs.bzl", "pinned_maven_install")
+jacoco_pinned_maven_install()
 
-pinned_maven_install()
+load(
+    "@build_stack_rules_scala_coverage_maven//:defs.bzl",
+    build_stack_rules_scala_coverage_pinned_maven_install = "pinned_maven_install",
+)
+
+build_stack_rules_scala_coverage_pinned_maven_install()
 
 # --------------------------------------------------
 # @jacoco
@@ -66,10 +65,28 @@ jacoco_http_archive(
 )
 
 # --------------------------------------------------
+# @io_bazel_rules_scala
+# --------------------------------------------------
+
+load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
+
+scala_config(scala_version = ".".join([
+    versions.scala.major,
+    versions.scala.minor,
+    versions.scala.patch,
+]))
+
+load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
+
+scala_repositories()
+
+# --------------------------------------------------
 # toolchains
 # --------------------------------------------------
 
 register_toolchains(
+    "//tools/scala:compile_toolchain",
+    "//tools/scala:testing_toolchain",
     # "//:java17_toolchain",
     # "//:java1_8_toolchain",
 )

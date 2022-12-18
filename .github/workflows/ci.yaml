@@ -45,4 +45,17 @@ jobs:
           --bazelrc=.github/workflows/ci.bazelrc
           --bazelrc=.bazelrc
           build
+          //example-bin
           //java/com/google/testing/coverage:Jacoco_jarjar
+
+      - name: bazel test
+        env:
+          # Bazelisk will download bazel to here, ensure it is cached between runs.
+          XDG_CACHE_HOME: ~/.cache/bazel-repo
+        run: >-
+          bazel
+          --bazelrc=.github/workflows/ci.bazelrc
+          --bazelrc=.bazelrc
+          test
+          //example-lib/...
+          //example-maven/...

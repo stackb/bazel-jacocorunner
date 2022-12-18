@@ -10,10 +10,10 @@ java_binary(
     deps = [
         ":JacocoCoverageLib",
         ":bitfield",
-        "@maven//:com_google_guava_guava",
-        "@maven//:org_jacoco_org_jacoco_agent",
-        "@maven//:org_jacoco_org_jacoco_core",
-        "@maven//:org_jacoco_org_jacoco_report",
+        "@jacoco_maven//:com_google_guava_guava",
+        "@jacoco_maven//:org_jacoco_org_jacoco_agent",
+        "@jacoco_maven//:org_jacoco_org_jacoco_core",
+        "@jacoco_maven//:org_jacoco_org_jacoco_report",
         "@org_jacoco_org_jacoco_agent_0_8_6_org_jacoco_agent_0_8_6_runtime_jar//jar",
     ],
 )
@@ -32,11 +32,11 @@ java_library(
     ],
     deps = [
         ":bitfield",
-        "@maven//:com_google_guava_guava",
-        "@maven//:org_jacoco_org_jacoco_core",
-        "@maven//:org_jacoco_org_jacoco_report",
-        "@maven//:org_ow2_asm_asm",
-        "@maven//:org_ow2_asm_asm_tree",
+        "@jacoco_maven//:com_google_guava_guava",
+        "@jacoco_maven//:org_jacoco_org_jacoco_core",
+        "@jacoco_maven//:org_jacoco_org_jacoco_report",
+        "@jacoco_maven//:org_ow2_asm_asm",
+        "@jacoco_maven//:org_ow2_asm_asm_tree",
     ],
 )
 

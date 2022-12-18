@@ -1,7 +1,7 @@
 load("@io_bazel_rules_scala//scala:scala.bzl", "scala_library", "scala_test")
 
 scala_library(
-    name = "example-lib",
+    name = "lib",
     srcs = glob(["src/main/scala/**/*.scala"]),
     visibility = ["//visibility:public"],
 )
@@ -9,7 +9,7 @@ scala_library(
 scala_test(
     name = "test",
     srcs = glob(["src/test/scala/**/*.scala"]),
-    deps = ["example-lib"],
+    deps = [":lib"],
 )
 
 java_library(

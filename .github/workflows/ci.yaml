@@ -45,7 +45,6 @@ jobs:
           --bazelrc=.github/workflows/ci.bazelrc
           --bazelrc=.bazelrc
           build
-          //example-bin
           //java/com/google/testing/coverage:Jacoco_jarjar
 
       - name: bazel test
@@ -57,5 +56,4 @@ jobs:
           --bazelrc=.github/workflows/ci.bazelrc
           --bazelrc=.bazelrc
           test
-          //example-lib/...
-          //example-maven/...
+          //example/...

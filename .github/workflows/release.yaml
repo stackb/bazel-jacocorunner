@@ -47,6 +47,8 @@ jobs:
           &&
           cp bazel-bin/java/com/google/testing/coverage/JacocoCoverage_jarjar_deploy.jar ./jacococoverage.$RELEASE_VERSION.jar
       - name: Release
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
         uses: softprops/action-gh-release@v1
         with:
           files: ./jacococoverage.$RELEASE_VERSION.jar

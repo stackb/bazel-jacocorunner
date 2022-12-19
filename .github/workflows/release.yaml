@@ -40,8 +40,8 @@ jobs:
           build
           //java/com/google/testing/coverage
           &&
-          cp bazel-bin/java/com/google/testing/coverage/JacocoCoverage_jarjar_deploy.jar ./jacococoverage.$GITHUB_REF_NAME.jar
+          cp bazel-bin/java/com/google/testing/coverage/JacocoCoverage_jarjar_deploy.jar ./jacococoverage.${{env.GITHUB_REF_NAME}}.jar
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: ./jacococoverage.$GITHUB_REF_NAME.jar
+          files: ./jacococoverage.${{env.GITHUB_REF_NAME}}.jar

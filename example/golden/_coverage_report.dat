@@ -1,0 +1,187 @@
+SF:example/lib/src/main/java/mypackage/Greeter.java
+FN:14,mypackage/Greeter::<clinit> ()V
+FN:13,mypackage/Greeter::<init> ()V
+FN:25,mypackage/Greeter::convertStreamToString (Ljava/io/InputStream;)Ljava/lang/String;
+FN:17,mypackage/Greeter::getRunfiles ()Ljava/lang/String;
+FN:30,mypackage/Greeter::hello (Ljava/lang/String;)V
+FN:42,mypackage/Greeter::main ([Ljava/lang/String;)V
+FNDA:0,mypackage/Greeter::<clinit> ()V
+FNDA:0,mypackage/Greeter::<init> ()V
+FNDA:0,mypackage/Greeter::convertStreamToString (Ljava/io/InputStream;)Ljava/lang/String;
+FNDA:0,mypackage/Greeter::getRunfiles ()Ljava/lang/String;
+FNDA:0,mypackage/Greeter::hello (Ljava/lang/String;)V
+FNDA:0,mypackage/Greeter::main ([Ljava/lang/String;)V
+FNF:6
+FNH:0
+DA:13,0
+DA:14,0
+DA:17,0
+DA:18,0
+DA:19,0
+DA:21,0
+DA:25,0
+DA:26,0
+DA:30,0
+DA:32,0
+DA:34,0
+DA:35,0
+DA:37,0
+DA:38,0
+DA:39,0
+DA:42,0
+DA:43,0
+DA:44,0
+DA:45,0
+LH:0
+LF:19
+end_of_record
+SF:example/lib/src/main/scala/mypackage/Foo.scala
+FN:21,mypackage/Foo$::$anonfun$testLambdas$1 (Lmypackage/Foo;Lmypackage/Foo;)Lscala/collection/immutable/List;
+FN:22,mypackage/Foo$::$anonfun$testLambdas$2 (Lmypackage/Foo;Lmypackage/Foo;I)Lscala/collection/immutable/List;
+FN:21,mypackage/Foo$::$anonfun$testLambdas$2$adapted (Lmypackage/Foo;Lmypackage/Foo;Ljava/lang/Object;)Lscala/collection/immutable/List;
+FN:23,mypackage/Foo$::$anonfun$testLambdas$3 (Lmypackage/Foo;Lmypackage/Foo;II)Lscala/collection/immutable/List;
+FN:22,mypackage/Foo$::$anonfun$testLambdas$3$adapted (Lmypackage/Foo;Lmypackage/Foo;ILjava/lang/Object;)Lscala/collection/immutable/List;
+FN:28,mypackage/Foo$::$anonfun$testLambdas$4 (Lmypackage/Foo;III)I
+FN:5,mypackage/Foo$::<clinit> ()V
+FN:3,mypackage/Foo$::apply (ILjava/lang/String;Lscala/collection/immutable/Set;)Lmypackage/Foo;
+FN:32,mypackage/Foo$::main ([Ljava/lang/String;)V
+FN:6,mypackage/Foo$::message ()Ljava/lang/String;
+FN:7,mypackage/Foo$::message1 ()I
+FN:10,mypackage/Foo$::testLambdas (I)Lscala/collection/immutable/List;
+FN:3,mypackage/Foo$::unapply (Lmypackage/Foo;)Lscala/Option;
+FN:5,mypackage/Foo$::writeReplace ()Ljava/lang/Object;
+FN:3,mypackage/Foo::<init> (ILjava/lang/String;Lscala/collection/immutable/Set;)V
+FN:3,mypackage/Foo::a ()I
+FN:-1,mypackage/Foo::apply (ILjava/lang/String;Lscala/collection/immutable/Set;)Lmypackage/Foo;
+FN:3,mypackage/Foo::b ()Ljava/lang/String;
+FN:3,mypackage/Foo::c ()Lscala/collection/immutable/Set;
+FN:3,mypackage/Foo::canEqual (Ljava/lang/Object;)Z
+FN:3,mypackage/Foo::copy (ILjava/lang/String;Lscala/collection/immutable/Set;)Lmypackage/Foo;
+FN:3,mypackage/Foo::copy$default$1 ()I
+FN:3,mypackage/Foo::copy$default$2 ()Ljava/lang/String;
+FN:3,mypackage/Foo::copy$default$3 ()Lscala/collection/immutable/Set;
+FN:3,mypackage/Foo::equals (Ljava/lang/Object;)Z
+FN:3,mypackage/Foo::hashCode ()I
+FN:-1,mypackage/Foo::main ([Ljava/lang/String;)V
+FN:-1,mypackage/Foo::message ()Ljava/lang/String;
+FN:-1,mypackage/Foo::message1 ()I
+FN:3,mypackage/Foo::productArity ()I
+FN:3,mypackage/Foo::productElement (I)Ljava/lang/Object;
+FN:3,mypackage/Foo::productElementName (I)Ljava/lang/String;
+FN:3,mypackage/Foo::productElementNames ()Lscala/collection/Iterator;
+FN:3,mypackage/Foo::productIterator ()Lscala/collection/Iterator;
+FN:3,mypackage/Foo::productPrefix ()Ljava/lang/String;
+FN:-1,mypackage/Foo::testLambdas (I)Lscala/collection/immutable/List;
+FN:3,mypackage/Foo::toString ()Ljava/lang/String;
+FN:-1,mypackage/Foo::unapply (Lmypackage/Foo;)Lscala/Option;
+FNDA:1,mypackage/Foo$::$anonfun$testLambdas$1 (Lmypackage/Foo;Lmypackage/Foo;)Lscala/collection/immutable/List;
+FNDA:1,mypackage/Foo$::$anonfun$testLambdas$2 (Lmypackage/Foo;Lmypackage/Foo;I)Lscala/collection/immutable/List;
+FNDA:1,mypackage/Foo$::$anonfun$testLambdas$2$adapted (Lmypackage/Foo;Lmypackage/Foo;Ljava/lang/Object;)Lscala/collection/immutable/List;
+FNDA:1,mypackage/Foo$::$anonfun$testLambdas$3 (Lmypackage/Foo;Lmypackage/Foo;II)Lscala/collection/immutable/List;
+FNDA:1,mypackage/Foo$::$anonfun$testLambdas$3$adapted (Lmypackage/Foo;Lmypackage/Foo;ILjava/lang/Object;)Lscala/collection/immutable/List;
+FNDA:1,mypackage/Foo$::$anonfun$testLambdas$4 (Lmypackage/Foo;III)I
+FNDA:1,mypackage/Foo$::<clinit> ()V
+FNDA:0,mypackage/Foo$::apply (ILjava/lang/String;Lscala/collection/immutable/Set;)Lmypackage/Foo;
+FNDA:1,mypackage/Foo$::main ([Ljava/lang/String;)V
+FNDA:1,mypackage/Foo$::message ()Ljava/lang/String;
+FNDA:1,mypackage/Foo$::message1 ()I
+FNDA:1,mypackage/Foo$::testLambdas (I)Lscala/collection/immutable/List;
+FNDA:0,mypackage/Foo$::unapply (Lmypackage/Foo;)Lscala/Option;
+FNDA:0,mypackage/Foo$::writeReplace ()Ljava/lang/Object;
+FNDA:1,mypackage/Foo::<init> (ILjava/lang/String;Lscala/collection/immutable/Set;)V
+FNDA:1,mypackage/Foo::a ()I
+FNDA:0,mypackage/Foo::apply (ILjava/lang/String;Lscala/collection/immutable/Set;)Lmypackage/Foo;
+FNDA:1,mypackage/Foo::b ()Ljava/lang/String;
+FNDA:1,mypackage/Foo::c ()Lscala/collection/immutable/Set;
+FNDA:0,mypackage/Foo::canEqual (Ljava/lang/Object;)Z
+FNDA:0,mypackage/Foo::copy (ILjava/lang/String;Lscala/collection/immutable/Set;)Lmypackage/Foo;
+FNDA:0,mypackage/Foo::copy$default$1 ()I
+FNDA:0,mypackage/Foo::copy$default$2 ()Ljava/lang/String;
+FNDA:0,mypackage/Foo::copy$default$3 ()Lscala/collection/immutable/Set;
+FNDA:0,mypackage/Foo::equals (Ljava/lang/Object;)Z
+FNDA:0,mypackage/Foo::hashCode ()I
+FNDA:0,mypackage/Foo::main ([Ljava/lang/String;)V
+FNDA:0,mypackage/Foo::message ()Ljava/lang/String;
+FNDA:0,mypackage/Foo::message1 ()I
+FNDA:1,mypackage/Foo::productArity ()I
+FNDA:1,mypackage/Foo::productElement (I)Ljava/lang/Object;
+FNDA:0,mypackage/Foo::productElementName (I)Ljava/lang/String;
+FNDA:0,mypackage/Foo::productElementNames ()Lscala/collection/Iterator;
+FNDA:1,mypackage/Foo::productIterator ()Lscala/collection/Iterator;
+FNDA:1,mypackage/Foo::productPrefix ()Ljava/lang/String;
+FNDA:0,mypackage/Foo::testLambdas (I)Lscala/collection/immutable/List;
+FNDA:1,mypackage/Foo::toString ()Ljava/lang/String;
+FNDA:0,mypackage/Foo::unapply (Lmypackage/Foo;)Lscala/Option;
+FNF:38
+FNH:20
+BRDA:3,0,0,-
+BRDA:3,0,1,-
+BRDA:3,0,2,-
+BRDA:3,0,3,-
+BRDA:3,0,4,-
+BRDA:3,0,5,-
+BRDA:3,0,6,-
+BRDA:3,0,7,-
+BRDA:3,0,8,-
+BRDA:3,0,9,-
+BRDA:3,0,10,-
+BRDA:3,0,11,-
+BRDA:3,0,12,-
+BRDA:3,0,13,-
+BRDA:3,0,14,-
+BRDA:3,0,15,-
+BRDA:3,0,16,-
+BRDA:3,0,17,-
+BRDA:3,0,18,-
+BRDA:3,0,19,-
+BRDA:3,0,20,-
+BRDA:3,0,21,-
+BRDA:3,0,22,-
+BRDA:3,0,23,-
+BRDA:3,0,0,-
+BRDA:3,0,1,-
+BRDA:13,0,0,1
+BRDA:13,0,1,0
+BRDA:13,0,2,1
+BRDA:13,0,3,1
+BRDA:23,0,0,1
+BRDA:23,0,1,1
+BRF:32
+BRH:5
+DA:3,1
+DA:5,1
+DA:6,1
+DA:7,1
+DA:10,1
+DA:11,1
+DA:12,1
+DA:13,1
+DA:14,1
+DA:16,1
+DA:18,1
+DA:20,1
+DA:21,1
+DA:22,1
+DA:23,1
+DA:24,1
+DA:26,1
+DA:28,1
+DA:32,1
+DA:33,1
+LH:20
+LF:20
+end_of_record
+SF:example/maven/src/main/scala/mypackage/Maven.scala
+FN:5,mypackage/Maven$::<clinit> ()V
+FN:6,mypackage/Maven$::message ()Ljava/lang/String;
+FN:-1,mypackage/Maven::message ()Ljava/lang/String;
+FNDA:1,mypackage/Maven$::<clinit> ()V
+FNDA:1,mypackage/Maven$::message ()Ljava/lang/String;
+FNDA:0,mypackage/Maven::message ()Ljava/lang/String;
+FNF:3
+FNH:2
+DA:5,1
+DA:6,1
+LH:2
+LF:2
+end_of_record

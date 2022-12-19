@@ -69,3 +69,11 @@ genrule(
         "@bazel_tools//tools/jdk:singlejar",
     ],
 )
+
+# coverage is a filegroup rule with the coverage runner packed up with all its
+# dependencies.
+filegroup(
+    name = "coverage",
+    srcs = ["//java/com/google/testing/coverage:Jacoco_jarjar"],
+    visibility = ["//visibility:public"],
+)

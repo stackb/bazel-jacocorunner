@@ -9,40 +9,11 @@ load(
 default_java_toolchain(
     name = "java17_toolchain",
     configuration = DEFAULT_TOOLCHAIN_CONFIGURATION,
-    # jacocorunner = "//tools:jacoco_coverage_runner_filegroup",
-    # java_runtime = "@bazel_tools//tools/jdk:remotejdk_17",
-    # java_runtime = "//tools/jdk:current_java_runtime",
+    jacocorunner = "//java/com/google/testing/coverage",
+    java_runtime = "@bazel_tools//tools/jdk:remotejdk_17",
     javacopts = DEFAULT_JAVACOPTS,
     jvm_opts = BASE_JDK9_JVM_OPTS + ["-Djava.security.manager=allow"],
     source_version = "17",
     target_version = "17",
     visibility = ["//visibility:public"],
 )
-
-# default_java_toolchain(
-#     name = "java1_8_toolchain",
-#     configuration = DEFAULT_TOOLCHAIN_CONFIGURATION,
-#     # jacocorunner = "//tools:jacoco_coverage_runner_filegroup",
-#     java_runtime = "@bazel_tools//tools/jdk:remotejdk_17",
-#     javacopts = DEFAULT_JAVACOPTS,
-#     jvm_opts = JDK8_JVM_OPTS,
-#     source_version = "8",
-#     target_version = "8",
-#     visibility = ["//visibility:public"],
-# )
-
-# default_java_toolchain(
-#     name = "java1_8_toolchain",
-#     configuration = JVM8_TOOLCHAIN_CONFIGURATION,
-#     java_runtime = "@bazel_tools//tools/jdk:jdk_8",
-#     source_version = "8",
-#     target_version = "8",
-#     visibility = ["//visibility:public"],
-# )
-
-# genquery(
-#     name = "java_toolchain_content.xml",
-#     expression = "kind(java_toolchain, deps(@bazel_tools//tools/jdk:current_java_toolchain))",
-#     opts = ["--output=xml"],
-#     scope = ["@bazel_tools//tools/jdk:current_java_toolchain"],
-# )

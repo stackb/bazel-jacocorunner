@@ -87,8 +87,3 @@ register_toolchains(
     "//tools/scala:compile_toolchain",
     "//tools/scala:testing_toolchain",
 )
-
-local_repository(
-    name = "coverage",
-    path = "./bazel-out/_coverage",
-)

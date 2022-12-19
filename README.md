@@ -13,14 +13,16 @@
   code](https://github.com/bazelbuild/bazel/blob/master/src/java_tools/junitrunner/java/com/google/testing/coverage/BUILD),
   copied here so we can more easily build it outside of bazel itself using
   different jacoco jar dependencies.
-  (`//java/com/google/testing/coverage:Jacoco_jarjar`).
+  (see `//java/com/google/testing/coverage`).
 - A custom http_archive rule that downloads @gergelyfabian's [scala-improved
   fork of jacoco](https://github.com/gergelyfabian/jacoco), builds it with
   `mvn`, and exposes the maven artifacts as deps (`jacoco_http_archive`).
 - A `default_java_toolchain` that consumes this custom jacocorunner, which could
-  be used directly but more likely serves as an example.
-- A `scala_toolchain` and `scala_test_toolchain`.
-- A set of examples, shamelessly copied from
+  be used directly but more likely serves as an example (ses
+  `//tools/java:java17_toolchain`).
+- Example `scala_toolchain` and `scala_test_toolchain` (see
+  `//tools/scala:compile_toolchain` and `//tools/scala:testing_toolchain`).
+- A set of scala+java examples, shamelessly copied from
   https://github.com/gergelyfabian/bazel-scala-example, which serves as a
   test-base so we can check that things are working.
 - A `coverage.sh` script that runs `bazel coverage` and then performs

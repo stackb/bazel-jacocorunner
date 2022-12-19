@@ -1,0 +1,8 @@
+# covbean prepares a new coverage redbean app.  At this point, its just an empty
+# zip file.
+genrule(
+    name = "covbean",
+    srcs = ["@redbean_dev_redbean//file"],
+    outs = ["covbean.zip"],
+    cmd = "cp $(location @redbean_dev_redbean//file) $@",
+)

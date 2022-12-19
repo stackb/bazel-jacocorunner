@@ -4,8 +4,7 @@ workspace(name = "build_stack_rules_scala_coverage")
 # default workspace dependencies
 # --------------------------------------------------
 
-load("//:versions.bzl", "versions")
-load("//:repositories.bzl", "repositories")
+load("//:repositories.bzl", "lcov_repositories", "repositories")
 
 repositories()
 
@@ -22,7 +21,7 @@ load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
 rules_jvm_external_setup()
 
 # --------------------------------------------------
-# maven deps
+# maven dependencies
 # --------------------------------------------------
 
 load("//:maven_repositories.bzl", "maven_repositories")
@@ -44,31 +43,19 @@ load(
 build_stack_rules_scala_coverage_pinned_maven_install()
 
 # --------------------------------------------------
-# @jacoco
+# @com_github_gergelyfabian_jacoco
 # --------------------------------------------------
 
-load("//:jacoco_http_archive.bzl", "jacoco_http_archive")
+load("//:jacoco_repositories.bzl", "jacoco_repositories")
 
-# Commit: 2974b221b7f2882cf95510abd81344f93c43e54b
-# Date: 2022-06-01 03:10:09 +0000 UTC
-# URL: https://github.com/gergelyfabian/jacoco/commit/2974b221b7f2882cf95510abd81344f93c43e54b
-#
-# Filter out macros for com.typesafe.scalalogging
-# Size: 648770 (649 kB)
-jacoco_http_archive(
-    name = "com_github_gergelyfabian_jacoco",
-    patch_args = ["-p1"],
-    patches = ["//third_party/jacoco:min-distribution-size.patch"],
-    sha256 = "98dc417be46a60df250eb8e497267f661577af4f4b2408eb0f2a40806b4798b8",
-    strip_prefix = "jacoco-2974b221b7f2882cf95510abd81344f93c43e54b",
-    urls = ["https://github.com/gergelyfabian/jacoco/archive/2974b221b7f2882cf95510abd81344f93c43e54b.tar.gz"],
-)
+jacoco_repositories()
 
 # --------------------------------------------------
 # @io_bazel_rules_scala
 # --------------------------------------------------
 
 load("@io_bazel_rules_scala//:scala_config.bzl", "scala_config")
+load("//:versions.bzl", "versions")
 
 scala_config(scala_version = ".".join([
     versions.scala.major,
@@ -81,12 +68,22 @@ load("@io_bazel_rules_scala//scala:scala.bzl", "scala_repositories")
 scala_repositories()
 
 # --------------------------------------------------
+# @rules_perl, lcov
+# --------------------------------------------------
+
+lcov_repositories()
+
+load("@rules_perl//perl:deps.bzl", "perl_register_toolchains", "perl_rules_dependencies")
+
+perl_rules_dependencies()
+
+perl_register_toolchains()
+
+# --------------------------------------------------
 # toolchains
 # --------------------------------------------------
 
 register_toolchains(
     "//tools/scala:compile_toolchain",
     "//tools/scala:testing_toolchain",
-    # "//:java17_toolchain",
-    # "//:java1_8_toolchain",
 )

@@ -15,6 +15,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Set output
+        id: vars
+        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+
       - name: Mount bazel action cache
         uses: actions/cache@v3
         if: always()
@@ -33,6 +37,7 @@ jobs:
         env:
           # Bazelisk will download bazel to here
           XDG_CACHE_HOME: ~/.cache/bazel-repo
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
         run: >-
           bazel
           --bazelrc=.github/workflows/ci.bazelrc
@@ -40,8 +45,8 @@ jobs:
           build
           //java/com/google/testing/coverage
           &&
-          cp bazel-bin/java/com/google/testing/coverage/JacocoCoverage_jarjar_deploy.jar ./jacococoverage.${{env.GITHUB_REF_NAME}}.jar
+          cp bazel-bin/java/com/google/testing/coverage/JacocoCoverage_jarjar_deploy.jar ./jacococoverage.$RELEASE_VERSION.jar
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: ./jacococoverage.${{env.GITHUB_REF_NAME}}.jar
+          files: ./jacococoverage.$RELEASE_VERSION.jar

@@ -20,7 +20,7 @@ function coverage {
 
 function post_coverage {
     local destdir=$(mktemp -d /tmp/gerritcov.XXXXXX)
-    "${GENHTML_PATH}" -o "${destdir}" "${COVERAGE_DAT_PATH}"
+    "${GENHTML_PATH}" --branch-coverage -o "${destdir}" "${COVERAGE_DAT_PATH}"
     local cwd=$(pwd)
     local bazel_out=$(bazel info output_path)
     local coverage_zip="${bazel_out}/_coverage/coverage.zip"

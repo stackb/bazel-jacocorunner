@@ -85,7 +85,6 @@ declare_deps_provider(
     visibility = ["//visibility:public"],
     deps = [
         "@build_stack_rules_scala_coverage_maven//:org_scalactic_scalactic_2_13",
-        # "@build_stack_rules_scala_coverage_maven//:org_scalamock_scalamock_2_13",
         "@build_stack_rules_scala_coverage_maven//:org_scalatest_scalatest_2_13",
     ],
 )

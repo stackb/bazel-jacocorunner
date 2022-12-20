@@ -9,11 +9,28 @@ load(
 default_java_toolchain(
     name = "java17_toolchain",
     configuration = DEFAULT_TOOLCHAIN_CONFIGURATION,
-    jacocorunner = "//java/com/google/testing/coverage",
+    jacocorunner = ":jacocorunner",
     java_runtime = "@bazel_tools//tools/jdk:remotejdk_17",
     javacopts = DEFAULT_JAVACOPTS,
-    jvm_opts = BASE_JDK9_JVM_OPTS + ["-Djava.security.manager=allow"],
+    jvm_opts = BASE_JDK9_JVM_OPTS,
     source_version = "17",
     target_version = "17",
     visibility = ["//visibility:public"],
+)
+
+# default_java_toolchain(
+#     name = "java17_toolchain",
+#     configuration = DEFAULT_TOOLCHAIN_CONFIGURATION,
+#     jacocorunner = ":jacocorunner",
+#     java_runtime = "@bazel_tools//tools/jdk:remotejdk_17",
+#     javacopts = DEFAULT_JAVACOPTS,
+#     jvm_opts = BASE_JDK9_JVM_OPTS,
+#     source_version = "17",
+#     target_version = "17",
+#     visibility = ["//visibility:public"],
+# )
+
+filegroup(
+    name = "jacocorunner",
+    srcs = ["jacococoverage.v0.0.6.jar"],
 )

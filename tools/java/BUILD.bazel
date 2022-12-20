@@ -1,34 +1,67 @@
-load(
-    "@bazel_tools//tools/jdk:default_java_toolchain.bzl",
-    "BASE_JDK9_JVM_OPTS",
-    "DEFAULT_JAVACOPTS",
-    "DEFAULT_TOOLCHAIN_CONFIGURATION",
-    "default_java_toolchain",
-)
+# NOTE: this java_toolchain appears in its full non-macro glory here for the
+# sake of being explicit (to see what's actually in it).  You can more
+# succinctly create a java_toolchain+(native.)toolchain using the
+# default_java_toolchain macro.
 
-default_java_toolchain(
-    name = "java17_toolchain",
-    configuration = DEFAULT_TOOLCHAIN_CONFIGURATION,
+java_toolchain(
+    name = "java17",
+    bootclasspath = ["@bazel_tools//tools/jdk:platformclasspath"],
+    forcibly_disable_header_compilation = False,
+    genclass = ["@remote_java_tools//:GenClass"],
+    header_compiler = ["@remote_java_tools//:TurbineDirect"],
+    header_compiler_direct = ["@remote_java_tools//:TurbineDirect"],
+    ijar = ["@bazel_tools//tools/jdk:ijar"],
     jacocorunner = ":jacocorunner",
     java_runtime = "@bazel_tools//tools/jdk:remotejdk_17",
-    javacopts = DEFAULT_JAVACOPTS,
-    jvm_opts = BASE_JDK9_JVM_OPTS,
+    javabuilder = ["@remote_java_tools//:JavaBuilder"],
+    javac_supports_workers = True,
+    javacopts = [
+        "-XDskipDuplicateBridges=true",
+        "-XDcompilePolicy=simple",
+        "-g",
+        "-parameters",
+        "-Xep:ReturnValueIgnored:OFF",
+    ],
+    jvm_opts = [
+        "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.resources=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+        "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+        "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+        "--add-opens=java.base/java.nio=ALL-UNNAMED",
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "-Dsun.io.useCanonCaches=false",
+    ],
+    misc = [
+        "-XDskipDuplicateBridges=true",
+        "-XDcompilePolicy=simple",
+        "-g",
+        "-parameters",
+        "-Xep:ReturnValueIgnored:OFF",
+    ],
+    singlejar = ["@bazel_tools//tools/jdk:singlejar"],
     source_version = "17",
     target_version = "17",
-    visibility = ["//visibility:public"],
 )
 
-# default_java_toolchain(
-#     name = "java17_toolchain",
-#     configuration = DEFAULT_TOOLCHAIN_CONFIGURATION,
-#     jacocorunner = ":jacocorunner",
-#     java_runtime = "@bazel_tools//tools/jdk:remotejdk_17",
-#     javacopts = DEFAULT_JAVACOPTS,
-#     jvm_opts = BASE_JDK9_JVM_OPTS,
-#     source_version = "17",
-#     target_version = "17",
-#     visibility = ["//visibility:public"],
-# )
+config_setting(
+    name = "java17_version_setting",
+    values = {"java_language_version": "17"},
+    visibility = ["//visibility:private"],
+)
+
+toolchain(
+    name = "java17_toolchain",
+    target_settings = [":java17_version_setting"],
+    toolchain = "//tools/java:java17",
+    toolchain_type = "@bazel_tools//tools/jdk:toolchain_type",
+)
 
 filegroup(
     name = "jacocorunner",

@@ -24,9 +24,7 @@
   https://github.com/gergelyfabian/bazel-scala-example, which serves as a
   test-base so we can check that things are working.
 - A `coverage.sh` script that runs `bazel coverage` and then performs
-  lcov/genhtml post-processing on the combined `_coverage_report.dat`.  The
-  final generated report HTML files are packed as a [redbean
-  app](https://redbean.dev/) (fancy zip file) for easy serving.
+  lcov/genhtml post-processing on the combined `_coverage_report.dat`.
 - A github workflow `ci.yaml` that runs the tests on new PRs and the `master`
   branch.
 - A github workflow `release.yaml` that publishes `jacocorunner-{VERSION}.jar`
@@ -46,9 +44,9 @@ following:
 ```bazel
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-# ------------------------------------------------------
+# --------------------------------------------------------
 # provides @build_stack_bazel_jacocorunner//tools/jdk:*
-# ------------------------------------------------------
+# --------------------------------------------------------
 
 # Branch: master
 # Commit: 6b66562185f2700dcdb33c7a5382bde0c7f7d15f
@@ -64,17 +62,18 @@ http_archive(
     urls = ["https://github.com/stackb/bazel-jacocorunner/archive/6b66562185f2700dcdb33c7a5382bde0c7f7d15f.tar.gz"],
 )
 
-# ------------------------------------------------------
-# provides @bazel_jacocorunner_jar//:jar
-# ------------------------------------------------------
+# --------------------------------------------------------
+# provides @bazel_jacocorunner_jar//:jar, needed by 
+# toolchains in @build_stack_bazel_jacocorunner//tools/jdk
+# --------------------------------------------------------
 
 load("@build_stack_bazel_jacocorunner//:repositories.bzl", "bazel_jacocorunner_jar")
 
 bazel_jacocorunner_jar()
 
-# ------------------------------------------------------
+# --------------------------------------------------------
 # register a toolchain
-# ------------------------------------------------------
+# --------------------------------------------------------
 
 register_toolchains("@build_stack_bazel_jacocorunner//tools/jdk:toolchain_java11_definition")
 ```
@@ -89,12 +88,13 @@ build:java11 --tool_java_runtime_version=remotejdk_11
 build:java11 --java_toolchain=@build_stack_bazel_jacocorunner//tools/jdk:toolchain_java11_definition
 build:java11 --host_java_toolchain=@build_stack_bazel_jacocorunner//tools/jdk:toolchain_java11_definition
 
-coverage:combined_coverage --combined_report=lcov
-coverage:combined_coverage --coverage_report_generator="@bazel_tools//tools/test/CoverageOutputGenerator/java/com/google/devtools/coverageoutputgenerator:Main"
-coverage:combined_coverage --experimental_fetch_all_coverage_outputs
-coverage:combined_coverage --test_env=VERBOSE_COVERAGE=1
+coverage:combined --combined_report=lcov
+coverage:combined --coverage_report_generator="@bazel_tools//tools/test/CoverageOutputGenerator/java/com/google/devtools/coverageoutputgenerator:Main"
+coverage:combined --experimental_fetch_all_coverage_outputs
+coverage:combined --test_env=VERBOSE_COVERAGE=1
 
-build --config=java11 --config=combined_coverage
+build --config=java11
+coverage --config=combined
 ```
 
 ## `coverage.sh`

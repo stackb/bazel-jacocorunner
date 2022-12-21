@@ -153,17 +153,10 @@ def redbean_dev_redbean():
     )
 
 def bazel_jacocorunner():
-    # _maybe(
-    #     http_archive,
-    #     name = "bazel_jacocorunner",
-    #     sha256 = "b34effe1771c47c0c78408d2001c4ab96e91b8054ae02cd5f0f18de50721c4e1",
-    #     urls = ["https://github.com/stackb/bazel_jacocorunner/files/10273204/jacococoverage.v0.0.6.zip"],
-    #     build_file_content = """filegroup(name = "jar", srcs = ["jacococoverage.v0.0.6.jar"], visibility = ["//visibility:public"])""",
-    # )
-
-    http_archive(
+    _maybe(
+        http_archive,
         name = "bazel_jacocorunner",
-        sha256 = "e67466660252058f04d15ab311e1306b5754de74a900e47ebae7f77ee69e52e1",
-        urls = ["https://github.com/stackb/bazel-jacocorunner/files/10281669/jacocorunner.zip"],
+        sha256 = "6732934e1b76474048ba1ae3ae8f620474229754d7afd2ec0c9273b42f35b943",
+        urls = ["https://github.com/stackb/bazel-jacocorunner/files/10281716/jacocorunner.v0.0.11.zip"],
         build_file_content = """filegroup(name = "jar", srcs = ["jacocorunner.jar"], visibility = ["//visibility:public"])""",
     )

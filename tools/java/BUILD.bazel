@@ -3,26 +3,35 @@
 # succinctly create a java_toolchain+(native.)toolchain using the
 # default_java_toolchain macro.
 
+# config_setting(
+#     name = "java17_version_setting",
+#     values = {"java_language_version": "17"},
+#     visibility = ["//visibility:private"],
+# )
+
+# toolchain(
+#     name = "java17_toolchain",
+#     target_settings = [":java17_version_setting"],
+#     toolchain = ":java17",
+#     toolchain_type = "@bazel_tools//tools/jdk:toolchain_type",
+# )
+
+# copied from `bazel query --output build
+# @bazel_tools//tools/jdk:toolchain_java11` with different jacocorunner.
 java_toolchain(
-    name = "java17",
+    name = "java11",
     bootclasspath = ["@bazel_tools//tools/jdk:platformclasspath"],
     forcibly_disable_header_compilation = False,
     genclass = ["@remote_java_tools//:GenClass"],
     header_compiler = ["@remote_java_tools//:TurbineDirect"],
     header_compiler_direct = ["@remote_java_tools//:TurbineDirect"],
     ijar = ["@bazel_tools//tools/jdk:ijar"],
-    jacocorunner = ":jacocorunner",
-    java_runtime = "@bazel_tools//tools/jdk:remotejdk_17",
+    jacocorunner = "@remote_java_tools//:jacoco_coverage_runner_filegroup",
+    java_runtime = "@bazel_tools//tools/jdk:remote_jdk11",
     javabuilder = ["@remote_java_tools//:JavaBuilder"],
     javac_supports_workers = True,
-    javacopts = [
-        "-XDskipDuplicateBridges=true",
-        "-XDcompilePolicy=simple",
-        "-g",
-        "-parameters",
-        "-Xep:ReturnValueIgnored:OFF",
-    ],
     jvm_opts = [
+        "-XX:-CompactStrings",
         "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
         "--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
         "--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED",
@@ -45,25 +54,22 @@ java_toolchain(
         "-parameters",
         "-Xep:ReturnValueIgnored:OFF",
     ],
+    reduced_classpath_incompatible_processors = ["dagger.hilt.processor.internal.root.RootProcessor"],
     singlejar = ["@bazel_tools//tools/jdk:singlejar"],
-    source_version = "17",
-    target_version = "17",
+    source_version = "11",
+    target_version = "11",
+    turbine_jvm_opts = ["-XX:+UseParallelGC"],
 )
 
 config_setting(
-    name = "java17_version_setting",
-    values = {"java_language_version": "17"},
+    name = "java11_version_setting",
+    values = {"java_language_version": "11"},
     visibility = ["//visibility:private"],
 )
 
 toolchain(
-    name = "java17_toolchain",
-    target_settings = [":java17_version_setting"],
-    toolchain = "//tools/java:java17",
+    name = "java11_toolchain",
+    target_settings = [":java11_version_setting"],
+    toolchain = ":java11",
     toolchain_type = "@bazel_tools//tools/jdk:toolchain_type",
-)
-
-filegroup(
-    name = "jacocorunner",
-    srcs = ["jacococoverage.v0.0.6.jar"],
 )

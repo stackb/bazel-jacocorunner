@@ -86,5 +86,5 @@ perl_register_toolchains()
 register_toolchains(
     "//tools/scala:compile_toolchain",
     "//tools/scala:testing_toolchain",
-    "//tools/java:java17_toolchain",
+    "//tools/java:java11_toolchain",
 )

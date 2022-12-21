@@ -6,10 +6,21 @@ common --repository_cache=bazel-cache/repo
 # ----------------------------------------------
 # java configuration
 # ----------------------------------------------
-build --java_language_version=17
-build --tool_java_language_version=17
-build --java_runtime_version=remotejdk_17
-build --tool_java_runtime_version=remotejdk_17
+build:java11 --java_language_version=11
+build:java11 --tool_java_language_version=11
+build:java11 --java_runtime_version=remotejdk_11
+build:java11 --tool_java_runtime_version=remotejdk_11
+build:java11 --java_toolchain=//tools/java:java11_toolchain
+build:java11 --host_java_toolchain=//tools/java:java11_toolchain
+
+build:java17 --java_language_version=17
+build:java17 --tool_java_language_version=17
+build:java17 --java_runtime_version=remotejdk_17
+build:java17 --tool_java_runtime_version=remotejdk_17
+build:java17 --java_toolchain=//tools/java:java17_toolchain
+build:java17 --host_java_toolchain=//tools/java:java17_toolchain
+
+build --config=java11
 
 coverage:combined --combined_report=lcov
 coverage:combined --coverage_report_generator="@bazel_tools//tools/test/CoverageOutputGenerator/java/com/google/devtools/coverageoutputgenerator:Main"

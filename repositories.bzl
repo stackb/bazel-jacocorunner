@@ -12,6 +12,7 @@ def repositories():
     com_google_protobuf()
     rules_python()
     zlib()
+    rules_scala_jacocorunner()
 
 def lcov_repositories():
     linux_test_project_lcov()
@@ -144,8 +145,25 @@ def redbean_dev_redbean():
     # Last-Modified: Wed, 02 Nov 2022 16:41:11 GMT
     # Server: redbean/2.2.0
     # Size: 2314466 (2.3 MB)
-    http_file(
+    _maybe(
+        http_file,
         name = "redbean_dev_redbean",
         sha256 = "db8fc7cc5a7703b7ccb830a366eb69e728fc7892fd3ecc093c089d837aa5b91b",
         urls = ["https://redbean.dev/redbean-2.2.com"],
+    )
+
+def rules_scala_jacocorunner():
+    # _maybe(
+    #     http_archive,
+    #     name = "rules_scala_jacocorunner",
+    #     sha256 = "b34effe1771c47c0c78408d2001c4ab96e91b8054ae02cd5f0f18de50721c4e1",
+    #     urls = ["https://github.com/stackb/rules_scala_coverage/files/10273204/jacococoverage.v0.0.6.zip"],
+    #     build_file_content = """filegroup(name = "jar", srcs = ["jacococoverage.v0.0.6.jar"], visibility = ["//visibility:public"])""",
+    # )
+
+    http_archive(
+        name = "rules_scala_jacocorunner",
+        sha256 = "a7ddf6a65f1a4964254bfffd210fa1e44159efebf8df3c1193065615bea9b296",
+        urls = ["https://github.com/stackb/rules_scala_coverage/files/10273262/jacococoverage-experiment.zip"],
+        build_file_content = """filegroup(name = "jar", srcs = ["bazel-bin/java/com/google/testing/coverage/JacocoCoverage_jarjar_deploy.jar"], visibility = ["//visibility:public"])""",
     )

@@ -42,14 +42,15 @@ jobs:
           bazel
           --bazelrc=.github/workflows/ci.bazelrc
           --bazelrc=.bazelrc
-          build
-          //java/com/google/testing/coverage
+          build //java/com/google/testing/coverage:zip
           &&
-          cp bazel-bin/java/com/google/testing/coverage/JacocoCoverage_jarjar_deploy.jar ./jacococoverage.jar
+          cp bazel-bin/java/com/google/testing/coverage/jacococoverage.zip .
           &&
-          cp bazel-bin/java/com/google/testing/coverage/JacocoCoverage_jarjar_deploy.jar ./jacococoverage.${{ env.RELEASE_VERSION }}.jar
+          unzip jacococoverage.zip
           &&
-          zip ./jacococoverage.${{ env.RELEASE_VERSION }}.zip ./jacococoverage.jar
+          mv jacococoverage.jar ./jacococoverage.${{ env.RELEASE_VERSION }}.jar
+          &&
+          mv jacococoverage.zip ./jacococoverage.${{ env.RELEASE_VERSION }}.zip
       - name: Release
         env:
           RELEASE_VERSION: ${{ steps.vars.outputs.tag }}

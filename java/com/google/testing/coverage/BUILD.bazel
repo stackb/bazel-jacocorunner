@@ -71,3 +71,15 @@ filegroup(
     srcs = ["//java/com/google/testing/coverage:Jacoco_jarjar"],
     visibility = ["//visibility:public"],
 )
+
+genrule(
+    name = "zip",
+    srcs = ["//java/com/google/testing/coverage"],
+    outs = ["jacocorunner.zip"],
+    cmd = """
+cp $(location //java/com/google/testing/coverage) ./jacocorunner.jar
+$(location @bazel_tools//tools/zip:zipper) c $@ ./jacocorunner.jar
+""",
+    tools = ["@bazel_tools//tools/zip:zipper"],
+    visibility = ["//visibility:public"],
+)

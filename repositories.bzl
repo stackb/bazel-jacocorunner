@@ -12,7 +12,7 @@ def repositories():
     com_google_protobuf()
     rules_python()
     zlib()
-    bazel_jacocorunner_jar()
+    bazel_jacocorunner()
 
 def lcov_repositories():
     linux_test_project_lcov()
@@ -152,18 +152,18 @@ def redbean_dev_redbean():
         urls = ["https://redbean.dev/redbean-2.2.com"],
     )
 
-def bazel_jacocorunner_jar():
+def bazel_jacocorunner():
     # _maybe(
     #     http_archive,
-    #     name = "bazel_jacocorunner_jar",
+    #     name = "bazel_jacocorunner",
     #     sha256 = "b34effe1771c47c0c78408d2001c4ab96e91b8054ae02cd5f0f18de50721c4e1",
     #     urls = ["https://github.com/stackb/bazel_jacocorunner/files/10273204/jacococoverage.v0.0.6.zip"],
     #     build_file_content = """filegroup(name = "jar", srcs = ["jacococoverage.v0.0.6.jar"], visibility = ["//visibility:public"])""",
     # )
 
     http_archive(
-        name = "bazel_jacocorunner_jar",
-        sha256 = "a7ddf6a65f1a4964254bfffd210fa1e44159efebf8df3c1193065615bea9b296",
-        urls = ["https://github.com/stackb/bazel_jacocorunner/files/10273262/jacococoverage-experiment.zip"],
-        build_file_content = """filegroup(name = "jar", srcs = ["bazel-bin/java/com/google/testing/coverage/JacocoCoverage_jarjar_deploy.jar"], visibility = ["//visibility:public"])""",
+        name = "bazel_jacocorunner",
+        sha256 = "e67466660252058f04d15ab311e1306b5754de74a900e47ebae7f77ee69e52e1",
+        urls = ["https://github.com/stackb/bazel-jacocorunner/files/10281669/jacocorunner.zip"],
+        build_file_content = """filegroup(name = "jar", srcs = ["jacocorunner.jar"], visibility = ["//visibility:public"])""",
     )

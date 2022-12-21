@@ -63,13 +63,13 @@ http_archive(
 )
 
 # --------------------------------------------------------
-# provides @bazel_jacocorunner_jar//:jar, needed by 
+# provides @bazel_jacocorunner//:jar, needed by 
 # toolchains in @build_stack_bazel_jacocorunner//tools/jdk
 # --------------------------------------------------------
 
-load("@build_stack_bazel_jacocorunner//:repositories.bzl", "bazel_jacocorunner_jar")
+load("@build_stack_bazel_jacocorunner//:repositories.bzl", "bazel_jacocorunner")
 
-bazel_jacocorunner_jar()
+bazel_jacocorunner()
 
 # --------------------------------------------------------
 # register a toolchain

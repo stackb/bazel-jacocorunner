@@ -56,6 +56,6 @@ jobs:
           RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
         uses: softprops/action-gh-release@v1
         with:
-          files:
-            - ./jacococoverage.${{ env.RELEASE_VERSION }}.jar
-            - ./jacococoverage.${{ env.RELEASE_VERSION }}.zip
+          files: |
+            ./jacococoverage.${{ env.RELEASE_VERSION }}.jar
+            ./jacococoverage.${{ env.RELEASE_VERSION }}.zip

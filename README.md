@@ -1,11 +1,14 @@
 
-[![CI](https://github.com/stackb/bazel_jacocorunner/actions/workflows/ci.yaml/badge.svg)](https://github.com/stackb/bazel_jacocorunner/actions/workflows/ci.yaml)
+[![CI](https://github.com/stackb/bazel-jacocorunner/actions/workflows/ci.yaml/badge.svg)](https://github.com/stackb/bazel-jacocorunner/actions/workflows/ci.yaml)
 
-# bazel_jacocorunner
+# bazel-jacocorunner
 
-- [rules\_scala\_coverage](#bazel_jacocorunner)
+- [bazel-jacocorunner](#bazel-jacocorunner)
   - [What is this?](#what-is-this)
-  - [Links](#links)
+- [Usage](#usage)
+  - [`WORKSPACE`](#workspace)
+  - [`.bazelrc`](#bazelrc)
+  - [`coverage.sh`](#coveragesh)
 
 ## What is this?
 
@@ -17,11 +20,6 @@
 - A custom http_archive rule that downloads @gergelyfabian's [scala-improved
   fork of jacoco](https://github.com/gergelyfabian/jacoco), builds it with
   `mvn`, and exposes the maven artifacts as deps (`jacoco_http_archive`).
-- A `default_java_toolchain` that consumes this custom jacocorunner, which could
-  be used directly but more likely serves as an example (ses
-  `//tools/java:java17_toolchain`).
-- Example `scala_toolchain` and `scala_test_toolchain` (see
-  `//tools/scala:compile_toolchain` and `//tools/scala:testing_toolchain`).
 - A set of scala+java examples, shamelessly copied from
   https://github.com/gergelyfabian/bazel-scala-example, which serves as a
   test-base so we can check that things are working.
@@ -29,9 +27,119 @@
   lcov/genhtml post-processing on the combined `_coverage_report.dat`.  The
   final generated report HTML files are packed as a [redbean
   app](https://redbean.dev/) (fancy zip file) for easy serving.
-- A CI job (github actions) that runs the tests on new PRs and the `master`
+- A github workflow `ci.yaml` that runs the tests on new PRs and the `master`
   branch.
+- A github workflow `release.yaml` that publishes `jacocorunner-{VERSION}.jar`
+  as a release asset.
+- A set of `java_toolchain` and
+  `toolchain<@bazel_tools//tools/jdk:toolchain_type>` in `//tools/jdk` (using
+  the same naming patterns in `@bazel_tools//tools/jdk`) that consume the
+  release asset jar in the `java_toolchain.jacocorunner` attribute.
 
-## Links
+# Usage
 
-- https://www.youtube.com/watch?v=P51Rgcbxhyk
+To use one of the custom java toolchains, you could do something like the
+following:
+
+## `WORKSPACE`
+
+```bazel
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# ------------------------------------------------------
+# provides @build_stack_bazel_jacocorunner//tools/jdk:*
+# ------------------------------------------------------
+
+# Branch: master
+# Commit: 6b66562185f2700dcdb33c7a5382bde0c7f7d15f
+# Date: 2022-12-20 22:51:53 +0000 UTC
+# URL: https://github.com/stackb/bazel-jacocorunner/commit/6b66562185f2700dcdb33c7a5382bde0c7f7d15f
+# 
+# expand toolchain completely
+# Size: 443788 (444 kB)
+http_archive(
+    name = "build_stack_bazel_jacocorunner",
+    sha256 = "8c940052ae59e2bf0d15d36e704222f3a9201cc6599b16e4cac2467c66083378",
+    strip_prefix = "bazel-jacocorunner-6b66562185f2700dcdb33c7a5382bde0c7f7d15f",
+    urls = ["https://github.com/stackb/bazel-jacocorunner/archive/6b66562185f2700dcdb33c7a5382bde0c7f7d15f.tar.gz"],
+)
+
+# ------------------------------------------------------
+# provides @bazel_jacocorunner_jar//:jar
+# ------------------------------------------------------
+
+load("@build_stack_bazel_jacocorunner//:repositories.bzl", "bazel_jacocorunner_jar")
+
+bazel_jacocorunner_jar()
+
+# ------------------------------------------------------
+# register a toolchain
+# ------------------------------------------------------
+
+register_toolchains("@build_stack_bazel_jacocorunner//tools/jdk:toolchain_java11_definition")
+```
+
+## `.bazelrc`
+
+```conf
+build:java11 --java_language_version=11
+build:java11 --tool_java_language_version=11
+build:java11 --java_runtime_version=remotejdk_11
+build:java11 --tool_java_runtime_version=remotejdk_11
+build:java11 --java_toolchain=@build_stack_bazel_jacocorunner//tools/jdk:toolchain_java11_definition
+build:java11 --host_java_toolchain=@build_stack_bazel_jacocorunner//tools/jdk:toolchain_java11_definition
+
+coverage:combined_coverage --combined_report=lcov
+coverage:combined_coverage --coverage_report_generator="@bazel_tools//tools/test/CoverageOutputGenerator/java/com/google/devtools/coverageoutputgenerator:Main"
+coverage:combined_coverage --experimental_fetch_all_coverage_outputs
+coverage:combined_coverage --test_env=VERBOSE_COVERAGE=1
+
+build --config=java11 --config=combined_coverage
+```
+
+## `coverage.sh`
+
+If you want to use lcov/genhtml without having to install them on the host, add
+the following to your `WORKSPACE`:
+
+```bazel
+load("@build_stack_bazel_jacocorunner//:repositories.bzl", "lcov_repositories")
+
+lcov_repositories()
+```
+
+This could be used something like the following in a shell script:
+
+```sh
+# prebuild some tools so they are in bazel-bin...
+bazel build @linux_test_project_lcov//:genhtml_bin @build_stack_bazel_jacocorunner//tools/covbean
+
+# run your coverage targets and generate the bazel-out/_coverage/_coverage_report.dat file...
+bazel coverage //...
+
+# make a temp directory for the report files
+reportdir=$(mktemp -d /tmp/bazelcov.XXXXXX)
+
+# run genhtml on the output
+bazel-bin/external/linux_test_project_lcov/genhtml_bin \
+  -branch-coverage \
+  -o $reportdir \
+  bazel-out/_coverage/_coverage_report.dat
+
+# optionally, pack the report into an executable zip with an embedded webserver
+local covbean_zip="$PWD/covbean.zip"
+cp bazel-bin/external/build_stack_bazel_jacocorunner/tools/covbean/covbean.zip $covbean_zip
+chmod +wx $covbean_zip
+(cd $reportdir && zip $covbean_zip .)
+
+# clean up
+rm -rf $reportdir
+
+```
+
+Then you can view your report as follows:
+
+```sh
+sh ./covbean.zip &
+open http://localhost:8080
+```

@@ -5,4 +5,5 @@ genrule(
     srcs = ["@redbean_dev_redbean//file"],
     outs = ["covbean.zip"],
     cmd = "cp $(location @redbean_dev_redbean//file) $@",
+    visibility = ["//visibility:public"],
 )

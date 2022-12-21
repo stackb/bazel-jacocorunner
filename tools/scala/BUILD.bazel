@@ -28,9 +28,9 @@ declare_deps_provider(
     deps_id = "scala_compile_classpath",
     visibility = ["//visibility:public"],
     deps = [
-        "@build_stack_rules_scala_coverage_maven//:org_scala_lang_scala_compiler",
-        "@build_stack_rules_scala_coverage_maven//:org_scala_lang_scala_library",
-        "@build_stack_rules_scala_coverage_maven//:org_scala_lang_scala_reflect",
+        "@build_stack_bazel_jacocorunner_maven//:org_scala_lang_scala_compiler",
+        "@build_stack_bazel_jacocorunner_maven//:org_scala_lang_scala_library",
+        "@build_stack_bazel_jacocorunner_maven//:org_scala_lang_scala_reflect",
     ],
 )
 
@@ -38,8 +38,8 @@ declare_deps_provider(
     name = "scala_library_classpath_provider",
     deps_id = "scala_library_classpath",
     deps = [
-        "@build_stack_rules_scala_coverage_maven//:org_scala_lang_scala_library",
-        "@build_stack_rules_scala_coverage_maven//:org_scala_lang_scala_reflect",
+        "@build_stack_bazel_jacocorunner_maven//:org_scala_lang_scala_library",
+        "@build_stack_bazel_jacocorunner_maven//:org_scala_lang_scala_reflect",
     ],
 )
 
@@ -47,8 +47,8 @@ declare_deps_provider(
     name = "scala_macro_classpath_provider",
     deps_id = "scala_macro_classpath",
     deps = [
-        "@build_stack_rules_scala_coverage_maven//:org_scala_lang_scala_library",
-        "@build_stack_rules_scala_coverage_maven//:org_scala_lang_scala_reflect",
+        "@build_stack_bazel_jacocorunner_maven//:org_scala_lang_scala_library",
+        "@build_stack_bazel_jacocorunner_maven//:org_scala_lang_scala_reflect",
     ],
 )
 
@@ -84,7 +84,7 @@ declare_deps_provider(
     deps_id = "scalatest_classpath",
     visibility = ["//visibility:public"],
     deps = [
-        "@build_stack_rules_scala_coverage_maven//:org_scalactic_scalactic_2_13",
-        "@build_stack_rules_scala_coverage_maven//:org_scalatest_scalatest_2_13",
+        "@build_stack_bazel_jacocorunner_maven//:org_scalactic_scalactic_2_13",
+        "@build_stack_bazel_jacocorunner_maven//:org_scalatest_scalatest_2_13",
     ],
 )

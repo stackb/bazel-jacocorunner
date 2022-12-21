@@ -1,4 +1,4 @@
-workspace(name = "build_stack_rules_scala_coverage")
+workspace(name = "build_stack_bazel_jacocorunner")
 
 # --------------------------------------------------
 # default workspace dependencies
@@ -36,11 +36,11 @@ load(
 jacoco_pinned_maven_install()
 
 load(
-    "@build_stack_rules_scala_coverage_maven//:defs.bzl",
-    build_stack_rules_scala_coverage_pinned_maven_install = "pinned_maven_install",
+    "@build_stack_bazel_jacocorunner_maven//:defs.bzl",
+    build_stack_bazel_jacocorunner_pinned_maven_install = "pinned_maven_install",
 )
 
-build_stack_rules_scala_coverage_pinned_maven_install()
+build_stack_bazel_jacocorunner_pinned_maven_install()
 
 # --------------------------------------------------
 # @com_github_gergelyfabian_jacoco

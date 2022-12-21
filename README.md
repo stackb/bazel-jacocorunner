@@ -1,9 +1,9 @@
 
-[![CI](https://github.com/stackb/rules_scala_coverage/actions/workflows/ci.yaml/badge.svg)](https://github.com/stackb/rules_scala_coverage/actions/workflows/ci.yaml)
+[![CI](https://github.com/stackb/bazel_jacocorunner/actions/workflows/ci.yaml/badge.svg)](https://github.com/stackb/bazel_jacocorunner/actions/workflows/ci.yaml)
 
-# rules_scala_coverage
+# bazel_jacocorunner
 
-- [rules\_scala\_coverage](#rules_scala_coverage)
+- [rules\_scala\_coverage](#bazel_jacocorunner)
   - [What is this?](#what-is-this)
   - [Links](#links)
 

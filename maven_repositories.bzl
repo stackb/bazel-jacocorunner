@@ -10,7 +10,7 @@ def _maybe(repo_rule, name, **kwargs):
 
 def maven_repositories():
     jacoco_maven()
-    build_stack_rules_scala_coverage_maven()
+    build_stack_bazel_jacocorunner_maven()
 
 def jacoco_maven():
     _maybe(
@@ -30,10 +30,10 @@ def jacoco_maven():
         ],
     )
 
-def build_stack_rules_scala_coverage_maven():
+def build_stack_bazel_jacocorunner_maven():
     _maybe(
         maven_install,
-        name = "build_stack_rules_scala_coverage_maven",
+        name = "build_stack_bazel_jacocorunner_maven",
         artifacts = [
             "junit:junit:4.12",
             "org.scalatest:scalatest_%s:3.0.8" % SCALA_VERSION,
@@ -42,8 +42,8 @@ def build_stack_rules_scala_coverage_maven():
             "org.scala-lang:scala-reflect:jar:2.13.8",
             "org.scala-lang:scala-compiler:jar:2.13.8",
         ],
-        # bazel run @build_stack_rules_scala_coverage_maven//:pin
-        maven_install_json = "//:build_stack_rules_scala_coverage_maven_install.json",
+        # bazel run @build_stack_bazel_jacocorunner_maven//:pin
+        maven_install_json = "//:build_stack_bazel_jacocorunner_maven_install.json",
         repositories = [
             "https://repo1.maven.org/maven2",
             "https://repo.maven.apache.org/maven2",

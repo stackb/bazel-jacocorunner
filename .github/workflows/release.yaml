@@ -37,25 +37,31 @@ jobs:
         env:
           # Bazelisk will download bazel to here
           XDG_CACHE_HOME: ~/.cache/bazel-repo
-          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
         run: >-
           bazel
           --bazelrc=.github/workflows/ci.bazelrc
           --bazelrc=.bazelrc
-          build //java/com/google/testing/coverage:zip
+          build
+          //java/com/google/testing/coverage:zip
+
+      - name: Prepare release assets
+        env:
+          # Bazelisk will download bazel to here
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+        run: >-
+          cp bazel-bin/java/com/google/testing/coverage/jacocorunner.zip .
           &&
-          cp bazel-bin/java/com/google/testing/coverage/jacococoverage.zip .
+          unzip jacocorunner.zip
           &&
-          unzip jacococoverage.zip
+          mv jacocorunner.jar ./jacocorunner.${{ env.RELEASE_VERSION }}.jar
           &&
-          mv jacococoverage.jar ./jacococoverage.${{ env.RELEASE_VERSION }}.jar
-          &&
-          mv jacococoverage.zip ./jacococoverage.${{ env.RELEASE_VERSION }}.zip
+          mv jacocorunner.zip ./jacocorunner.${{ env.RELEASE_VERSION }}.zip
+
       - name: Release
         env:
           RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ./jacococoverage.${{ env.RELEASE_VERSION }}.jar
-            ./jacococoverage.${{ env.RELEASE_VERSION }}.zip
+            ./jacocorunner.${{ env.RELEASE_VERSION }}.jar
+            ./jacocorunner.${{ env.RELEASE_VERSION }}.zip

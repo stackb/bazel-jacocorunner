@@ -98,14 +98,14 @@ cat << EOF > $@
 
 To use this release asset:
 
-```bazel
+~~~bazel
 http_archive(
     name = "bazel_jacocorunner",
     sha256 = "$$sha256",
     urls = ["https://github.com/stackb/bazel-jacocorunner/files/XXXXXXXX/jacocorunner.XXXX.zip"],
     build_file_content = 'filegroup(name = "jar", srcs = ["jacocorunner.jar"], visibility = ["//visibility:public"])',
 )
-```
+~~~
 EOF
 """,
     tools = ["@bazel_tools//tools/build_defs/hash:sha256"],

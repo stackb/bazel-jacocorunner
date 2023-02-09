@@ -27,3 +27,5 @@ coverage:combined --combined_report=lcov
 coverage:combined --coverage_report_generator="@bazel_tools//tools/test/CoverageOutputGenerator/java/com/google/devtools/coverageoutputgenerator:Main"
 coverage:combined --experimental_fetch_all_coverage_outputs
 coverage:combined --test_env=VERBOSE_COVERAGE=1
+
+build --experimental_strict_java_deps=off

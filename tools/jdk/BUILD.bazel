@@ -205,6 +205,14 @@ toolchain(
     visibility = ["//visibility:public"],
 )
 
+toolchain(
+    name = "toolchain_runtime_java11_definition",
+    target_settings = ["//tools/jdk:toolchain_java11_version_setting"],
+    toolchain = "//tools/jdk:toolchain_java11",
+    toolchain_type = "@bazel_tools//tools/jdk:runtime_toolchain_type",
+    visibility = ["//visibility:public"],
+)
+
 config_setting(
     name = "toolchain_java11_version_setting",
     values = {"java_language_version": "11"},

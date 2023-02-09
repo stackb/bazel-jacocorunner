@@ -157,6 +157,6 @@ def bazel_jacocorunner():
         http_archive,
         name = "bazel_jacocorunner",
         sha256 = "6732934e1b76474048ba1ae3ae8f620474229754d7afd2ec0c9273b42f35b943",
-        urls = ["https://github.com/stackb/bazel-jacocorunner/files/10281716/jacocorunner.v0.0.11.zip"],
-        build_file_content = """filegroup(name = "jar", srcs = ["jacocorunner.jar"], visibility = ["//visibility:public"])""",
+        urls = ["https://github.com/stackb/bazel-jacocorunner/files/10282139/jacocorunner.v0.0.13.zip"],
+        build_file_content = 'filegroup(name = "jar", srcs = ["jacocorunner.jar"], visibility = ["//visibility:public"])',
     )

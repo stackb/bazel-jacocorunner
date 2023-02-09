@@ -1,0 +1,35 @@
+load("@rules_java//java:defs.bzl", "java_binary", "java_library")
+
+java_binary(
+    name = "coverageoutputgenerator",
+    visibility = ["//visibility:public"],
+    runtime_deps = [":coverageoutputgenerator_lib"],
+)
+
+java_library(
+    name = "coverageoutputgenerator_lib",
+    srcs = glob(["*.java"]),
+    deps = [
+        "//third_party:auto_value",
+        "@jacoco_maven//:com_beust_jcommander",
+        "@jacoco_maven//:com_google_code_findbugs_jsr305",
+        "@jacoco_maven//:com_google_code_gson_gson",
+        "@jacoco_maven//:com_google_guava_guava",
+    ],
+)
+
+java_library(
+    name = "BranchCoverage",
+    srcs = ["BranchCoverage.java"],
+    deps = [
+        "//third_party:auto_value",
+        "@jacoco_maven//:com_google_guava_guava",
+    ],
+)
+
+genrule(
+    name = "coverage_lcov_merge_tools",
+    srcs = [":all_lcov_merger_tools_deploy.jar"],
+    outs = ["coverage/all_lcov_merger_tools_deploy.jar"],
+    cmd = "cp $< $@",
+)

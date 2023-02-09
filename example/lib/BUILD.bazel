@@ -23,5 +23,19 @@ java_test(
         "src/test/java/mypackage/TestHello.java",
     ],
     test_class = "mypackage.TestHello",
-    deps = ["hello-world"],
+    deps = [
+        "hello-world",
+        "@bazel_tools//tools/jdk:TestRunner",
+    ],
+)
+
+java_runtime(
+    name = "jdk",
+    srcs = [
+        "@remotejdk11_macos_aarch64//:jdk-bin",
+        "@remotejdk11_macos_aarch64//:jdk-conf",
+        "@remotejdk11_macos_aarch64//:jdk-include",
+        "@remotejdk11_macos_aarch64//:jdk-lib",
+        "@remotejdk11_macos_aarch64//:jre-default",
+    ],
 )

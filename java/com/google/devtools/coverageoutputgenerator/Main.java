@@ -61,6 +61,7 @@ public class Main {
   }
 
   static int runWithArgs(String... args) throws ExecutionException, InterruptedException {
+    System.out.format("coveragereportgenerator args: %s\n", (Object[]) args);
     LcovMergerFlags flags = null;
     try {
       flags = LcovMergerFlags.parseFlags(args);
@@ -71,23 +72,34 @@ public class Main {
 
     File outputFile = new File(flags.outputFile());
 
-    List<File> filesInCoverageDir =
-        flags.coverageDir() != null
-            ? getCoverageFilesInDir(flags.coverageDir())
-            : ImmutableList.of();
-    Coverage coverage =
-        Coverage.merge(
-            parseFiles(
-                getTracefiles(flags, filesInCoverageDir),
-                LcovParser::parse,
-                flags.parseParallelism()),
-            parseFiles(
-                getGcovInfoFiles(filesInCoverageDir), GcovParser::parse, flags.parseParallelism()),
-            parseFiles(
-                getGcovJsonInfoFiles(filesInCoverageDir),
-                GcovJsonParser::parse,
-                flags.parseParallelism()));
+    List<File> filesInCoverageDir = flags.coverageDir() != null
+        ? getCoverageFilesInDir(flags.coverageDir())
+        : ImmutableList.of();
+    System.out.format("filesInCoverageDir: %s\n", filesInCoverageDir);
 
+    Coverage lcovCoverage = parseFiles(
+        getTracefiles(flags, filesInCoverageDir),
+        LcovParser::parse,
+        flags.parseParallelism());
+
+    Coverage gcovCoverage = parseFiles(
+        getGcovInfoFiles(filesInCoverageDir), GcovParser::parse, flags.parseParallelism());
+
+    Coverage gcovJsonCoverage = parseFiles(
+        getGcovJsonInfoFiles(filesInCoverageDir),
+        GcovJsonParser::parse,
+        flags.parseParallelism());
+
+    Coverage coverage = Coverage.merge(
+        lcovCoverage,
+        gcovCoverage,
+        gcovJsonCoverage);
+
+    System.out.format("lcovCoverage: %s\n", lcovCoverage);
+    System.out.format("gcovCoverage: %s\n", gcovCoverage);
+    System.out.format("gcovJsonCoverage: %s\n", gcovJsonCoverage);
+
+    System.out.format("Coverage <initial merge>: %s\n", coverage);
     if (flags.sourcesToReplaceFile() != null) {
       coverage.maybeReplaceSourceFileNames(getMapFromFile(flags.sourcesToReplaceFile()));
     }
@@ -112,8 +124,10 @@ public class Main {
           exitStatus = 1;
         }
       } else {
-        // Bazel doesn't support yet converting profdata files to lcov. We still want to output a
-        // coverage report so we copy the content of the profdata file to the output file. This is
+        // Bazel doesn't support yet converting profdata files to lcov. We still want to
+        // output a
+        // coverage report so we copy the content of the profdata file to the output
+        // file. This is
         // not ideal but it unblocks some Bazel C++
         // coverage users.
         // TODO(#5881): Add support for profdata files.
@@ -131,11 +145,15 @@ public class Main {
           exitStatus = 1;
         }
       }
+      System.out.format("coverage: %s\n", coverage);
+      // System.exit(3);
+
       return exitStatus;
     }
 
     if (!coverage.isEmpty() && profdataFile != null) {
-      // If there is one profdata file then there can't be other types of reports because there is
+      // If there is one profdata file then there can't be other types of reports
+      // because there is
       // no way to merge them.
       // TODO(#5881): Add support for profdata files.
       logger.log(
@@ -147,16 +165,22 @@ public class Main {
     if (!flags.filterSources().isEmpty()) {
       coverage = Coverage.filterOutMatchingSources(coverage, flags.filterSources());
     }
+    System.out.format("Coverage <filtered out matching sources>: %s\n", coverage);
 
     if (flags.hasSourceFileManifest()) {
-      coverage =
-          Coverage.getOnlyTheseSources(
-              coverage, getSourcesFromSourceFileManifest(flags.sourceFileManifest()));
+      System.out.format("flags.hasSourceFileManifest: %s\n", flags.sourceFileManifest());
+
+      coverage = Coverage.getOnlyTheseSources(
+          coverage, getSourcesFromSourceFileManifest(flags.sourceFileManifest()));
     }
+
+    System.out.format("after source file manifest>: %s\n", coverage);
+
+    System.out.format("final coverage: %s\n", coverage.getAllSourceFiles());
 
     if (coverage.isEmpty()) {
       try {
-        logger.log(Level.WARNING, "There was no coverage found.");
+        logger.log(Level.WARNING, "There was no coverage found (really).");
         if (!Files.exists(outputFile.toPath())) {
           Files.createFile(outputFile.toPath()); // Generate empty declared output
         }
@@ -188,10 +212,14 @@ public class Main {
   /**
    * Returns a set of source file names from the given manifest.
    *
-   * <p>The manifest contains file names line by line. Each file can either be a source file (e.g.
+   * <p>
+   * The manifest contains file names line by line. Each file can either be a
+   * source file (e.g.
    * .java, .cc) or a coverage metadata file (e.g. .gcno, .em).
    *
-   * <p>This method only returns the C++ source files, ignoring the other files as they are not
+   * <p>
+   * This method only returns the C++ source files, ignoring the other files as
+   * they are not
    * necessary when putting together the final coverage report.
    */
   private static Set<String> getSourcesFromSourceFileManifest(String sourceFileManifest) {
@@ -235,7 +263,8 @@ public class Main {
   }
 
   /**
-   * Returns a .profdata file from the given files or null if none or more profdata files were
+   * Returns a .profdata file from the given files or null if none or more
+   * profdata files were
    * found.
    */
   private static File getProfdataFileOrNull(List<File> files) {
@@ -264,9 +293,9 @@ public class Main {
       lcovTracefiles = getFilesWithExtension(filesInCoverageDir, TRACEFILE_EXTENSION);
     }
     if (lcovTracefiles.isEmpty()) {
-      logger.log(Level.INFO, "No lcov file found.");
+      logger.log(Level.INFO, "No lcov files found.");
     } else {
-      logger.log(Level.INFO, "Found " + lcovTracefiles.size() + " tracefiles.");
+      logger.log(Level.INFO, "Found " + String.format("%s", lcovTracefiles) + " tracefiles.");
     }
     return lcovTracefiles;
   }
@@ -274,7 +303,9 @@ public class Main {
   /**
    * Reads the content of the given file and returns a matching map.
    *
-   * <p>It assumes the file contains lines in the form key:value. For each line it creates an entry
+   * <p>
+   * It assumes the file contains lines in the form key:value. For each line it
+   * creates an entry
    * in the map with the corresponding key and value.
    */
   private static ImmutableMap<String, String> getMapFromFile(String file) {
@@ -283,9 +314,7 @@ public class Main {
     try (FileInputStream inputStream = new FileInputStream(file);
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, UTF_8);
         BufferedReader reader = new BufferedReader(inputStreamReader)) {
-      for (String keyToValueLine = reader.readLine();
-          keyToValueLine != null;
-          keyToValueLine = reader.readLine()) {
+      for (String keyToValueLine = reader.readLine(); keyToValueLine != null; keyToValueLine = reader.readLine()) {
         String[] keyAndValue = keyToValueLine.split(":");
         if (keyAndValue.length == 2) {
           mapBuilder.put(keyAndValue[0], keyAndValue[1]);
@@ -332,31 +361,29 @@ public class Main {
     int partitionSize = max(1, files.size() / parallelism);
     List<List<File>> partitions = Lists.partition(files, partitionSize);
     return pool.submit(
-            () ->
-                partitions.parallelStream()
-                    .map((p) -> parseFilesSequentially(p, parser))
-                    .reduce((c1, c2) -> Coverage.merge(c1, c2))
-                    .orElse(Coverage.create()))
+        () -> partitions.parallelStream()
+            .map((p) -> parseFilesSequentially(p, parser))
+            .reduce((c1, c2) -> Coverage.merge(c1, c2))
+            .orElse(Coverage.create()))
         .get();
   }
 
   /**
-   * Returns a list of all the files with the given extension found recursively under the given dir.
+   * Returns a list of all the files with the given extension found recursively
+   * under the given dir.
    */
   @VisibleForTesting
   static List<File> getCoverageFilesInDir(String dir) {
     List<File> files = new ArrayList<>();
     try (Stream<Path> stream = Files.walk(Paths.get(dir))) {
-      files =
-          stream
-              .filter(
-                  p ->
-                      p.toString().endsWith(TRACEFILE_EXTENSION)
-                          || p.toString().endsWith(GCOV_EXTENSION)
-                          || p.toString().endsWith(GCOV_JSON_EXTENSION)
-                          || p.toString().endsWith(PROFDATA_EXTENSION))
-              .map(path -> path.toFile())
-              .collect(Collectors.toList());
+      files = stream
+          .filter(
+              p -> p.toString().endsWith(TRACEFILE_EXTENSION)
+                  || p.toString().endsWith(GCOV_EXTENSION)
+                  || p.toString().endsWith(GCOV_JSON_EXTENSION)
+                  || p.toString().endsWith(PROFDATA_EXTENSION))
+          .map(path -> path.toFile())
+          .collect(Collectors.toList());
     } catch (IOException ex) {
       logger.log(Level.SEVERE, "Error reading folder " + dir + ": " + ex.getMessage());
     }
@@ -375,7 +402,8 @@ public class Main {
       InputStreamReader inputStreamReader = new InputStreamReader(inputStream, UTF_8);
       BufferedReader reader = new BufferedReader(inputStreamReader);
       for (String tracefile = reader.readLine(); tracefile != null; tracefile = reader.readLine()) {
-        // TODO(elenairina): baseline coverage contains some file names that need to be modified
+        // TODO(elenairina): baseline coverage contains some file names that need to be
+        // modified
         if (!tracefile.endsWith("baseline_coverage.dat")) {
           datFiles.add(new File(tracefile));
         }

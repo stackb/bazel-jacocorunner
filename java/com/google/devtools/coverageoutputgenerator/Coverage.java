@@ -67,12 +67,15 @@ class Coverage {
   }
 
   /**
-   * Returns {@link Coverage} only for the given CC source filenames, filtering out every other CC
-   * sources of the given coverage. Other types of source files (e.g. Java) will not be filtered
+   * Returns {@link Coverage} only for the given CC source filenames, filtering
+   * out every other CC
+   * sources of the given coverage. Other types of source files (e.g. Java) will
+   * not be filtered
    * out.
    *
-   * @param coverage The initial coverage.
-   * @param sourcesToKeep The filenames of the sources to keep from the initial coverage.
+   * @param coverage      The initial coverage.
+   * @param sourcesToKeep The filenames of the sources to keep from the initial
+   *                      coverage.
    */
   static Coverage getOnlyTheseSources(Coverage coverage, Set<String> sourcesToKeep) {
     if (coverage == null || sourcesToKeep == null) {
@@ -94,7 +97,8 @@ class Coverage {
   }
 
   /**
-   * Replaces the source file names in the current coverage with their mapping in the given map, if
+   * Replaces the source file names in the current coverage with their mapping in
+   * the given map, if
    * it exists.
    */
   void maybeReplaceSourceFileNames(ImmutableMap<String, String> reportedToOriginalSources) {
@@ -138,6 +142,11 @@ class Coverage {
 
   boolean isEmpty() {
     return sourceFiles.isEmpty();
+  }
+
+  @Override
+  public String toString() {
+    return String.format("Coverage files: %s", this.getAllSourceFiles());
   }
 
   Collection<SourceFileCoverage> getAllSourceFiles() {

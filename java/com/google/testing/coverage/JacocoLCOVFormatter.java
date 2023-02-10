@@ -13,10 +13,10 @@
 // limitations under the License.
 package com.google.testing.coverage;
 
-
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -37,18 +37,26 @@ import org.jacoco.report.ISourceFileLocator;
 /**
  * Simple lcov formatter to be used with lcov_merger.par.
  *
- * <p>The lcov format is documented here: http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php
+ * <p>
+ * The lcov format is documented here:
+ * http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php
  */
 public class JacocoLCOVFormatter {
 
-  // Exec paths of the uninstrumented files that are being analyzed. This is helpful for files in
-  // jars passed through java_import or some custom rule where blaze doesn't have enough context to
+  // Exec paths of the uninstrumented files that are being analyzed. This is
+  // helpful for files in
+  // jars passed through java_import or some custom rule where blaze doesn't have
+  // enough context to
   // compute the right paths, but relies on these pre-computed exec paths.
-  // Exec paths can be provided in two formats, either as a plain string or as a delimited
-  // string mapping source file paths to class paths. Coverage entries whose class-paths are not the
-  // suffix of any file in this list are discarded.  If not provided (as is
-  // the case when class is initialized with the zero-argument constructor), the entries are
-  // returned unchanged (but note this may result in LCOV output which do not reference actual
+  // Exec paths can be provided in two formats, either as a plain string or as a
+  // delimited
+  // string mapping source file paths to class paths. Coverage entries whose
+  // class-paths are not the
+  // suffix of any file in this list are discarded. If not provided (as is
+  // the case when class is initialized with the zero-argument constructor), the
+  // entries are
+  // returned unchanged (but note this may result in LCOV output which do not
+  // reference actual
   // file-paths).
   private final Optional<ImmutableSet<String>> execPathsOfUninstrumentedFiles;
 
@@ -56,6 +64,8 @@ public class JacocoLCOVFormatter {
 
   public JacocoLCOVFormatter(ImmutableSet<String> execPathsOfUninstrumentedFiles) {
     this.execPathsOfUninstrumentedFiles = Optional.of(execPathsOfUninstrumentedFiles);
+    System.out.format("🧰 JacocoLCOVFormatter.execPathsOfUninstrumentedFiles: %s\n",
+        this.execPathsOfUninstrumentedFiles);
   }
 
   public JacocoLCOVFormatter() {
@@ -69,31 +79,59 @@ public class JacocoLCOVFormatter {
       private Map<String, Map<String, IClassCoverage>> sourceToClassCoverage = new TreeMap<>();
       private Map<String, ISourceFileCoverage> sourceToFileCoverage = new TreeMap<>();
 
-      private String getExecPathForEntryName(String classPath) {
+      private String getExecPathForEntryName(String pkgName, String fileName) {
+        final String classPath = pkgName + "/" + fileName;
         if (execPathsOfUninstrumentedFiles.isEmpty()) {
+          System.out.format("🧰 JacocoLCOVFormatter.getExecPathForEntryName: %s -(failfast self)!\n",
+              classPath);
           return classPath;
         }
 
         String matchingFileName = classPath.startsWith("/") ? classPath : "/" + classPath;
         for (String execPath : execPathsOfUninstrumentedFiles.get()) {
+          System.out.format("  📚 JacocoLCOVFormatter considering execPath: %s\n", execPath);
+          final String baseName = Path.of(execPath).getFileName().toString();
+
           if (execPath.contains(EXEC_PATH_DELIMITER)) {
             String[] parts = execPath.split(EXEC_PATH_DELIMITER, 2);
             if (parts.length != 2) {
               continue;
             }
             if (parts[1].equals(matchingFileName)) {
+              System.out.format("🧰 JacocoLCOVFormatter.getExecPathForEntryName: %s -(matched parts[0])-> %s!\n",
+                  classPath,
+                  parts[0]);
               return parts[0];
             }
           } else if (execPath.endsWith(matchingFileName)) {
+            System.out.format("🧰 JacocoLCOVFormatter.getExecPathForEntryName: %s -(matched endswith)-> %s!\n",
+                classPath,
+                matchingFileName);
             return execPath;
+          } else if (matchingFileName.equals("/" + execPath)) {
+            System.out.format("🧰 JacocoLCOVFormatter.getExecPathForEntryName: %s -(matched root+equals)-> %s!\n",
+                classPath,
+                matchingFileName);
+            return execPath;
+          } else {
+            if (baseName.equals(fileName) && execPath.contains(pkgName)) {
+              System.out.format(
+                  "🧰 JacocoLCOVFormatter.getExecPathForEntryName: %s -(matched pkg(%s)+basename)-> %s!\n",
+                  classPath,
+                  pkgName,
+                  matchingFileName);
+              return execPath;
+            }
           }
         }
+        System.out.format("🧰 JacocoLCOVFormatter.getExecPathForEntryName: %s --> null!\n", classPath);
         return null;
       }
 
       @Override
       public void visitInfo(List<SessionInfo> sessionInfos, Collection<ExecutionData> executionData)
-          throws IOException {}
+          throws IOException {
+      }
 
       @Override
       public void visitEnd() throws IOException {
@@ -105,17 +143,23 @@ public class JacocoLCOVFormatter {
       @Override
       public void visitBundle(IBundleCoverage bundle, ISourceFileLocator locator)
           throws IOException {
-        // Jacoco's API is geared towards HTML/XML reports which have a hierarchical nature. The
-        // following loop would call the report generators for packages, classes, methods, and
-        // finally link the source view (which would be generated by walking the actual source file
-        // and annotating the coverage data). For lcov, we don't really need the source file, but
-        // we need to output FN/FNDA pairs with method coverage, which means we need to index this
+        // Jacoco's API is geared towards HTML/XML reports which have a hierarchical
+        // nature. The
+        // following loop would call the report generators for packages, classes,
+        // methods, and
+        // finally link the source view (which would be generated by walking the actual
+        // source file
+        // and annotating the coverage data). For lcov, we don't really need the source
+        // file, but
+        // we need to output FN/FNDA pairs with method coverage, which means we need to
+        // index this
         // information and process everything at the end.
         for (IPackageCoverage pkgCoverage : bundle.getPackages()) {
           for (IClassCoverage clsCoverage : pkgCoverage.getClasses()) {
-            String fileName =
-                getExecPathForEntryName(
-                    clsCoverage.getPackageName() + "/" + clsCoverage.getSourceFileName());
+            String fileName = getExecPathForEntryName(
+                clsCoverage.getPackageName(),
+                clsCoverage.getSourceFileName());
+            // clsCoverage.getPackageName() + "/" + clsCoverage.getSourceFileName());
             if (fileName == null) {
               continue;
             }
@@ -125,8 +169,7 @@ public class JacocoLCOVFormatter {
             sourceToClassCoverage.get(fileName).put(clsCoverage.getName(), clsCoverage);
           }
           for (ISourceFileCoverage srcCoverage : pkgCoverage.getSourceFiles()) {
-            String sourceName =
-                getExecPathForEntryName(srcCoverage.getPackageName() + "/" + srcCoverage.getName());
+            String sourceName = getExecPathForEntryName(srcCoverage.getPackageName(), srcCoverage.getName());
             if (sourceName != null) {
               sourceToFileCoverage.put(sourceName, srcCoverage);
             }
@@ -196,7 +239,8 @@ public class JacocoLCOVFormatter {
       }
 
       private String constructFunctionName(IMethodCoverage mthCoverage, String clsName) {
-        // The lcov spec doesn't of course cover Java formats, so we output the method signature.
+        // The lcov spec doesn't of course cover Java formats, so we output the method
+        // signature.
         // lcov_merger doesn't seem to care about these entries.
         return clsName + "::" + mthCoverage.getName() + " " + mthCoverage.getDesc();
       }

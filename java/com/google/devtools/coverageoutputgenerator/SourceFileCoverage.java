@@ -58,11 +58,19 @@ class SourceFileCoverage {
     this.lines.putAll(other.lines);
   }
 
+  @Override
+  public String toString() {
+    return this.sourceFileName;
+  }
+
   void changeSourcefileName(String newSourcefileName) {
     this.sourceFileName = newSourcefileName;
   }
 
-  /** Returns the merged functions found in the two given {@code SourceFileCoverage}s. */
+  /**
+   * Returns the merged functions found in the two given
+   * {@code SourceFileCoverage}s.
+   */
   @VisibleForTesting
   static TreeMap<String, Integer> mergeLineNumbers(SourceFileCoverage s1, SourceFileCoverage s2) {
     TreeMap<String, Integer> merged = new TreeMap<>();
@@ -71,7 +79,10 @@ class SourceFileCoverage {
     return merged;
   }
 
-  /** Returns the merged execution count found in the two given {@code SourceFileCoverage}s. */
+  /**
+   * Returns the merged execution count found in the two given
+   * {@code SourceFileCoverage}s.
+   */
   @VisibleForTesting
   static TreeMap<String, Long> mergeFunctionsExecution(
       SourceFileCoverage s1, SourceFileCoverage s2) {
@@ -81,13 +92,15 @@ class SourceFileCoverage {
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Long::sum, TreeMap::new));
   }
 
-  /** Returns the merged branches found in the two given {@code SourceFileCoverage}s. */
+  /**
+   * Returns the merged branches found in the two given
+   * {@code SourceFileCoverage}s.
+   */
   @VisibleForTesting
   static ListMultimap<Integer, BranchCoverage> mergeBranches(
       SourceFileCoverage s1, SourceFileCoverage s2) {
 
-    ListMultimap<Integer, BranchCoverage> merged =
-        MultimapBuilder.treeKeys().arrayListValues().build();
+    ListMultimap<Integer, BranchCoverage> merged = MultimapBuilder.treeKeys().arrayListValues().build();
 
     for (int line : Sets.union(s1.branches.keySet(), s2.branches.keySet())) {
       Collection<BranchCoverage> s1Branches = s1.branches.get(line);
@@ -122,11 +135,13 @@ class SourceFileCoverage {
   }
 
   static int getNumberOfBranchesHit(SourceFileCoverage sourceFileCoverage) {
-    return (int)
-        sourceFileCoverage.branches.values().stream().filter(BranchCoverage::wasExecuted).count();
+    return (int) sourceFileCoverage.branches.values().stream().filter(BranchCoverage::wasExecuted).count();
   }
 
-  /** Returns the merged line execution found in the two given {@code SourceFileCoverage}s. */
+  /**
+   * Returns the merged line execution found in the two given
+   * {@code SourceFileCoverage}s.
+   */
   @VisibleForTesting
   static TreeMap<Integer, LineCoverage> mergeLines(SourceFileCoverage s1, SourceFileCoverage s2) {
     return Stream.of(s1.lines, s2.lines)
@@ -138,17 +153,19 @@ class SourceFileCoverage {
   }
 
   private static int getNumberOfExecutedLines(SourceFileCoverage sourceFileCoverage) {
-    return (int)
-        sourceFileCoverage.lines.entrySet().stream()
-            .filter(line -> line.getValue().executionCount() > 0)
-            .count();
+    return (int) sourceFileCoverage.lines.entrySet().stream()
+        .filter(line -> line.getValue().executionCount() > 0)
+        .count();
   }
 
   /**
-   * Merges all the fields of {@code other} with the current {@link SourceFileCoverage} into a new
+   * Merges all the fields of {@code other} with the current
+   * {@link SourceFileCoverage} into a new
    * {@link SourceFileCoverage}
    *
-   * <p>Assumes both the current and the given {@link SourceFileCoverage} have the same {@code
+   * <p>
+   * Assumes both the current and the given {@link SourceFileCoverage} have the
+   * same {@code
    * sourceFileName}.
    *
    * @return a new {@link SourceFileCoverage} that contains the merged coverage.
@@ -173,8 +190,7 @@ class SourceFileCoverage {
   }
 
   int nrFunctionsHit() {
-    return (int)
-        functionsExecution.entrySet().stream().filter(function -> function.getValue() > 0).count();
+    return (int) functionsExecution.entrySet().stream().filter(function -> function.getValue() > 0).count();
   }
 
   int nrBranchesFound() {

@@ -18,6 +18,10 @@ def jacoco_maven():
         name = "jacoco_maven",
         artifacts = [
             "com.google.guava:guava:31.1-jre",
+            "com.google.auto.value:auto-value:1.8.2",
+            "com.google.auto.value:auto-value-annotations:1.8.2",
+            "com.google.code.gson:gson:2.9.1",
+            "com.beust:jcommander:1.48",
             "org.jacoco:org.jacoco.agent:" + JACOCO_VERSION,
             "org.jacoco:org.jacoco.core:" + JACOCO_VERSION,
             "org.jacoco:org.jacoco.report:" + JACOCO_VERSION,

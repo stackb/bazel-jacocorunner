@@ -19,9 +19,7 @@ java_library(
 
 java_test(
     name = "java_test",
-    srcs = [
-        "src/test/java/mypackage/TestHello.java",
-    ],
+    srcs = ["src/test/java/mypackage/TestHello.java"],
     test_class = "mypackage.TestHello",
-    deps = ["hello-world"],
+    deps = [":hello-world"],
 )

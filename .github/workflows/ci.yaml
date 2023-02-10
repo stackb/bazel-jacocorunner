@@ -46,6 +46,7 @@ jobs:
           --bazelrc=.bazelrc
           build
           //java/com/google/testing/coverage:Jacoco_jarjar
+          java/com/google/devtools/coverageoutputgenerator
 
       - name: bazel test
         env:

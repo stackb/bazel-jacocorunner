@@ -1,0 +1,10 @@
+genrule(
+    name = "release_notes_md",
+    srcs = [
+        "//java/com/google/testing/coverage:release_notes.md",
+        "//java/com/google/devtools/coverageoutputgenerator:release_notes.md",
+    ],
+    outs = ["release_notes.md"],
+    cmd = "cat $(SRCS) > $@",
+    visibility = ["//visibility:public"],
+)

@@ -13,6 +13,7 @@ def repositories():
     rules_python()
     zlib()
     bazel_jacocorunner()
+    bazel_coverageoutputgenerator()
 
 def lcov_repositories():
     linux_test_project_lcov()
@@ -156,7 +157,16 @@ def bazel_jacocorunner():
     _maybe(
         http_archive,
         name = "bazel_jacocorunner",
-        sha256 = "6732934e1b76474048ba1ae3ae8f620474229754d7afd2ec0c9273b42f35b943",
-        urls = ["https://github.com/stackb/bazel-jacocorunner/files/10282139/jacocorunner.v0.0.13.zip"],
+        sha256 = "42cab3a0c8e41f8bce5877d09b98ca26d24e2dc5abc5a67ea393f4159c667881",
+        urls = ["https://github.com/stackb/bazel-jacocorunner/files/10711373/jacocorunner.v0.1.1.zip"],
         build_file_content = 'filegroup(name = "jar", srcs = ["jacocorunner.jar"], visibility = ["//visibility:public"])',
+    )
+
+def bazel_coverageoutputgenerator():
+    _maybe(
+        http_archive,
+        name = "bazel_coverageoutputgenerator",
+        sha256 = "5c8e0de6b7968f94f86075b8b34f252c7dd83d7da5c5921fe84c2a4e7d844f03",
+        urls = ["https://github.com/stackb/bazel-jacocorunner/files/10711370/coverageoutputgenerator.v0.1.1.zip"],
+        build_file_content = 'filegroup(name = "jar", srcs = ["coverageoutputgenerator.jar"], visibility = ["//visibility:public"])',
     )

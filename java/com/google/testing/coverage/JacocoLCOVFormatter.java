@@ -64,8 +64,6 @@ public class JacocoLCOVFormatter {
 
   public JacocoLCOVFormatter(ImmutableSet<String> execPathsOfUninstrumentedFiles) {
     this.execPathsOfUninstrumentedFiles = Optional.of(execPathsOfUninstrumentedFiles);
-    System.out.format("🧰 JacocoLCOVFormatter.execPathsOfUninstrumentedFiles: %s\n",
-        this.execPathsOfUninstrumentedFiles);
   }
 
   public JacocoLCOVFormatter() {
@@ -82,14 +80,11 @@ public class JacocoLCOVFormatter {
       private String getExecPathForEntryName(String pkgName, String fileName) {
         final String classPath = pkgName + "/" + fileName;
         if (execPathsOfUninstrumentedFiles.isEmpty()) {
-          System.out.format("🧰 JacocoLCOVFormatter.getExecPathForEntryName: %s -(failfast self)!\n",
-              classPath);
           return classPath;
         }
 
         String matchingFileName = classPath.startsWith("/") ? classPath : "/" + classPath;
         for (String execPath : execPathsOfUninstrumentedFiles.get()) {
-          System.out.format("  📚 JacocoLCOVFormatter considering execPath: %s\n", execPath);
           final String baseName = Path.of(execPath).getFileName().toString();
 
           if (execPath.contains(EXEC_PATH_DELIMITER)) {
@@ -98,33 +93,18 @@ public class JacocoLCOVFormatter {
               continue;
             }
             if (parts[1].equals(matchingFileName)) {
-              System.out.format("🧰 JacocoLCOVFormatter.getExecPathForEntryName: %s -(matched parts[0])-> %s!\n",
-                  classPath,
-                  parts[0]);
               return parts[0];
             }
           } else if (execPath.endsWith(matchingFileName)) {
-            System.out.format("🧰 JacocoLCOVFormatter.getExecPathForEntryName: %s -(matched endswith)-> %s!\n",
-                classPath,
-                matchingFileName);
             return execPath;
           } else if (matchingFileName.equals("/" + execPath)) {
-            System.out.format("🧰 JacocoLCOVFormatter.getExecPathForEntryName: %s -(matched root+equals)-> %s!\n",
-                classPath,
-                matchingFileName);
             return execPath;
           } else {
             if (baseName.equals(fileName) && execPath.contains(pkgName)) {
-              System.out.format(
-                  "🧰 JacocoLCOVFormatter.getExecPathForEntryName: %s -(matched pkg(%s)+basename)-> %s!\n",
-                  classPath,
-                  pkgName,
-                  matchingFileName);
               return execPath;
             }
           }
         }
-        System.out.format("🧰 JacocoLCOVFormatter.getExecPathForEntryName: %s --> null!\n", classPath);
         return null;
       }
 

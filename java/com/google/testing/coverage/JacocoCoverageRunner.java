@@ -106,7 +106,6 @@ public class JacocoCoverageRunner {
     executionData = jacocoExec;
     reportFile = new File(reportPath);
     this.classesJars = getFilesFromFileList(wrapperFile, javaRunfilesRoot);
-    System.err.format("JacocoCoverageRunner.classesJars: %s\n", this.classesJars);
   }
 
   public JacocoCoverageRunner(InputStream jacocoExec, String reportPath, File... metadataJars) {
@@ -203,7 +202,6 @@ public class JacocoCoverageRunner {
       }
     } else {
       for (Map.Entry<String, byte[]> entry : uninstrumentedClasses.entrySet()) {
-        System.out.format("💩 analyzing class %s: %s\n", entry.getValue(), entry.getKey());
         analyzer.analyzeClass(entry.getValue(), entry.getKey());
       }
     }
@@ -272,7 +270,6 @@ public class JacocoCoverageRunner {
   @VisibleForTesting
   ImmutableSet<String> createPathsSet() throws IOException {
     if (!pathsForCoverage.isEmpty()) {
-      System.out.format("👋 createPathsSet, using pathsForCoverage: %s\n", pathsForCoverage);
 
       return pathsForCoverage;
     }
@@ -314,7 +311,6 @@ public class JacocoCoverageRunner {
             new InputStreamReader(jarFile.getInputStream(jarEntry), UTF_8));
         String line;
         while ((line = bufferedReader.readLine()) != null) {
-          System.out.format("👋 adding line to addEntriesToExecPathsSet: %s\n", line);
           execPathsSetBuilder.add(line);
         }
       }
@@ -468,13 +464,8 @@ public class JacocoCoverageRunner {
   }
 
   public static void main(String[] args) throws Exception {
-    // Object[] mainArgs = args;
-    // System.out.format("main args!: %s\n", mainArgs);
-
     String metadataFile = System.getenv("JACOCO_METADATA_JAR");
-    System.out.println("JACOCO_METADATA_JAR: " + metadataFile);
     String jarWrappedValue = System.getenv("JACOCO_IS_JAR_WRAPPED");
-    System.out.println("JACOCO_IS_JAR_WRAPPED: " + jarWrappedValue);
 
     boolean wasWrappedJar = jarWrappedValue != null ? !jarWrappedValue.equals("0") : false;
 
@@ -488,7 +479,6 @@ public class JacocoCoverageRunner {
       metadataFiles = new File[urls.length];
       for (int i = 0; i < urls.length; i++) {
         String file = URLDecoder.decode(urls[i].getFile(), "UTF-8");
-        System.out.format("inspecting classloader url %d: %s\n", i, file);
 
         metadataFiles[i] = new File(file);
         // Special case for when there is only one deploy jar on the classpath.
@@ -510,18 +500,15 @@ public class JacocoCoverageRunner {
 
             if (jarEntryName.endsWith(".class.uninstrumented")
                 && !uninstrumentedClasses.containsKey(jarEntryName)) {
-              System.out.format("😀 uninstrumentedClasses jarEntryName: %s\n", jarEntryName);
               uninstrumentedClasses.put(
                   jarEntryName, ByteStreams.toByteArray(jarFile.getInputStream(jarEntry)));
             } else if (jarEntryName.endsWith("-paths-for-coverage.txt")) {
-              System.out.format("🚀 paths-for-coverage jarEntryName: %s\n", jarEntryName);
 
               BufferedReader bufferedReader = new BufferedReader(
                   new InputStreamReader(jarFile.getInputStream(jarEntry), UTF_8));
               String line;
               while ((line = bufferedReader.readLine()) != null) {
                 pathsForCoverageBuilder.add(line);
-                System.out.format("🚀 paths-for-coverage line: %s\n", line);
               }
             }
           }
@@ -530,12 +517,9 @@ public class JacocoCoverageRunner {
     }
 
     final ImmutableSet<String> pathsForCoverage = pathsForCoverageBuilder.build();
-    System.out.format("pathsForCoverage: %s\n", pathsForCoverage);
     final String metadataFileFinal = metadataFile;
-    System.out.format("metadataFileFinal: %s\n", metadataFileFinal);
 
     final File[] metadataFilesFinal = metadataFiles;
-    System.out.format("metadataFilesFinal: %s\n", (Object[]) metadataFilesFinal);
 
     final String javaRunfilesRoot = System.getenv("JACOCO_JAVA_RUNFILES_ROOT");
 
@@ -549,7 +533,6 @@ public class JacocoCoverageRunner {
     final boolean hasOneFileFinal = hasOneFile;
 
     final String coverageReportBase = System.getenv("JAVA_COVERAGE_FILE");
-    System.out.format("coverageReportBase: %s\n", coverageReportBase);
     // Disable Jacoco's default output mechanism, which runs as a shutdown hook. We
     // generate the
     // report in our own shutdown hook below, and we want to avoid the data race
@@ -633,15 +616,11 @@ public class JacocoCoverageRunner {
                               .toArray(new File[0]);
                     }
                     if (uninstrumentedClasses.isEmpty()) {
-                      System.err.format("JacocoCoverageRunner.reportPath: %s\n", coverageReportDat);
-                      System.err.format("JacocoCoverageRunner.metadataJars: %s\n", (Object[]) metadataJars);
 
                       new JacocoCoverageRunner(dataInputStream, coverageReportDat, metadataJars)
                           .create();
                       // throw new IOException("uninstrumentedClasses is empty!");
                     } else {
-                      System.err.format("not empty JacocoCoverageRunner.reportPath: %s\n", coverageReportDat);
-                      System.err.format("not empty JacocoCoverageRunner.metadataJars: %s\n", (Object[]) metadataJars);
                       new JacocoCoverageRunner(
                           dataInputStream,
                           coverageReportDat,
@@ -666,7 +645,6 @@ public class JacocoCoverageRunner {
     // accordingly.
     boolean insideDeployJar = (deployJars == 1) && (metadataFilesFinal == null || metadataFilesFinal.length == 1);
     Class<?> mainClass = getMainClass(insideDeployJar);
-    System.out.format("mainClass: %s\n", mainClass);
 
     Method main = mainClass.getMethod("main", String[].class);
     main.setAccessible(true);
@@ -685,10 +663,6 @@ public class JacocoCoverageRunner {
     main.invoke(null, new Object[] { args });
   }
 
-  // private static void printf(final String format, ...Object args) {
-  // System.out.printf(format, args);
-  // }
-
   static class MyCoverageBuilder implements ICoverageVisitor {
     private final CoverageBuilder delegate;
 
@@ -698,8 +672,6 @@ public class JacocoCoverageRunner {
 
     @Override
     public void visitCoverage(IClassCoverage coverage) {
-      System.out.format("visitCoverage id=%d, packageName=%s, isNoMatch=%s\n", coverage.getId(),
-          coverage.getPackageName(), coverage.isNoMatch());
       this.delegate.visitCoverage(coverage);
     }
   }

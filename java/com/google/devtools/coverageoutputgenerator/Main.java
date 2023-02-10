@@ -61,7 +61,6 @@ public class Main {
   }
 
   static int runWithArgs(String... args) throws ExecutionException, InterruptedException {
-    System.out.format("coveragereportgenerator args: %s\n", (Object[]) args);
     LcovMergerFlags flags = null;
     try {
       flags = LcovMergerFlags.parseFlags(args);
@@ -75,7 +74,6 @@ public class Main {
     List<File> filesInCoverageDir = flags.coverageDir() != null
         ? getCoverageFilesInDir(flags.coverageDir())
         : ImmutableList.of();
-    System.out.format("filesInCoverageDir: %s\n", filesInCoverageDir);
 
     Coverage lcovCoverage = parseFiles(
         getTracefiles(flags, filesInCoverageDir),
@@ -95,11 +93,7 @@ public class Main {
         gcovCoverage,
         gcovJsonCoverage);
 
-    System.out.format("lcovCoverage: %s\n", lcovCoverage);
-    System.out.format("gcovCoverage: %s\n", gcovCoverage);
-    System.out.format("gcovJsonCoverage: %s\n", gcovJsonCoverage);
 
-    System.out.format("Coverage <initial merge>: %s\n", coverage);
     if (flags.sourcesToReplaceFile() != null) {
       coverage.maybeReplaceSourceFileNames(getMapFromFile(flags.sourcesToReplaceFile()));
     }
@@ -145,7 +139,6 @@ public class Main {
           exitStatus = 1;
         }
       }
-      System.out.format("coverage: %s\n", coverage);
       // System.exit(3);
 
       return exitStatus;
@@ -165,18 +158,14 @@ public class Main {
     if (!flags.filterSources().isEmpty()) {
       coverage = Coverage.filterOutMatchingSources(coverage, flags.filterSources());
     }
-    System.out.format("Coverage <filtered out matching sources>: %s\n", coverage);
 
     if (flags.hasSourceFileManifest()) {
-      System.out.format("flags.hasSourceFileManifest: %s\n", flags.sourceFileManifest());
 
       coverage = Coverage.getOnlyTheseSources(
           coverage, getSourcesFromSourceFileManifest(flags.sourceFileManifest()));
     }
 
-    System.out.format("after source file manifest>: %s\n", coverage);
 
-    System.out.format("final coverage: %s\n", coverage.getAllSourceFiles());
 
     if (coverage.isEmpty()) {
       try {

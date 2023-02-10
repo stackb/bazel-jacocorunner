@@ -42,7 +42,7 @@ jobs:
           --bazelrc=.github/workflows/ci.bazelrc
           --bazelrc=.bazelrc
           build
-          //java/com/google/testing/coverage:release_notes.md
+          //:release_notes.md
 
       - name: Prepare release assets
         env:
@@ -56,13 +56,23 @@ jobs:
           mv jacocorunner.jar ./jacocorunner.${{ env.RELEASE_VERSION }}.jar
           &&
           mv jacocorunner.zip ./jacocorunner.${{ env.RELEASE_VERSION }}.zip
+          &&
+          cp bazel-bin/java/com/google/devtools/coverageoutputgenerator/coverageoutputgenerator.zip .
+          &&
+          unzip coverageoutputgenerator.zip
+          &&
+          mv coverageoutputgenerator.jar ./coverageoutputgenerator.${{ env.RELEASE_VERSION }}.jar
+          &&
+          mv coverageoutputgenerator.zip ./coverageoutputgenerator.${{ env.RELEASE_VERSION }}.zip
 
       - name: Release
         env:
           RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
         uses: softprops/action-gh-release@v1
         with:
-          body_path: bazel-bin/java/com/google/testing/coverage/release_notes.md
+          body_path: bazel-bin/release_notes.md
           files: |
             ./jacocorunner.${{ env.RELEASE_VERSION }}.jar
             ./jacocorunner.${{ env.RELEASE_VERSION }}.zip
+            ./coverageoutputgenerator.${{ env.RELEASE_VERSION }}.jar
+            ./coverageoutputgenerator.${{ env.RELEASE_VERSION }}.zip

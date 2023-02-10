@@ -11,6 +11,8 @@
   - [`coverage.sh`](#coveragesh)
 - [NOTES](#notes)
   - [How do I know which `java_toolchain` is being used?](#how-do-i-know-which-java_toolchain-is-being-used)
+  - [JacocoCoverageRunner Changes](#jacococoveragerunner-changes)
+  - [Scala Coverage Caveats](#scala-coverage-caveats)
 
 ## What is this?
 
@@ -236,3 +238,36 @@ action 'Building example/lib/libhello-world.jar (1 source file)'
     --reduce_classpath_mode \
     JAVABUILDER_REDUCED)
 ```
+
+## JacocoCoverageRunner Changes
+
+The `java/com/google/testing/coverage/JacocoLCOVFormatter.java` in this repo
+differs a little bit from the one in the bazel repository.  In the original
+repo, there is a function `.getExecPathForEntryName(String classPath)` that
+takes the computed name of the `IClassCoverage` and tries to match it against a
+set of paths that are known from scanning files named in the
+`-paths-for-coverage.txt` file in instrumented jar `META-INF/`.  That function
+does an `.endswith()` comparison to match files, and if
+`.getExecPathForEntryName` return `null`, coverage will not be generated for
+that file.  In our case, the layout of files does not exactly match the package
+names.  Additional logic has been added: if the basenames match and the
+`execPath` contains the package name, this is considered a match.
+
+## Scala Coverage Caveats
+
+When scala coverage is run, it creates instrumented jars like
+`mylib-offline.jar` where the bytecode has been instrumented by jacoco.  This
+creates a runtime dependency of the code to be tested/analyzed for coverage on
+the jacoco agent code, which is provided by default in rules_scala by
+`@bazel_tools//tools/jdk:JacocoCoverage`.  It turns out different jacoco
+versions have unique internally shaded classnames, for example
+`org/jacoco/agent/rt/internal_f3994fa/core/JaCoCo.class`.  So, if you try and
+analyze code that has been instrumented by a different jacoco version used
+under test, you'll get a ClassNotFoundError and coverage will fail
+(will be looking for something like `.../internal_c0314ef/...`).
+
+As a result, you need to ensure that the same jacoco version is used across the
+`java_toolchain.jacocorunner`, `scala_toolchain.jacocorunner`, and the
+`JacocoInstrumenter.deps`.  It is not possible to configure the `deps` of the
+`rules_scala/src/java/io/bazel/rulesscala/coverage/instrumenter`, so you'll need
+to patch rules_scala with your custom jacocorunner.

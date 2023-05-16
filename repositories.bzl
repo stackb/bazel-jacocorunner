@@ -52,9 +52,9 @@ def apache_maven():
         build_file_content = """
 exports_files(["lib/*.jar", "conf/**/*", "bin/**/*"])
     """,
-        sha256 = "c7047a48deb626abf26f71ab3643d296db9b1e67f1faa7d988637deac876b5a9",
-        strip_prefix = "apache-maven-3.8.6",
-        urls = ["https://dlcdn.apache.org/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz"],
+        sha256 = "17811e108701af5985bf5167abbd47c06e92c6c6bd1c13a1a1c095c9b4ecc32a",
+        strip_prefix = "apache-maven-3.8.8",
+        urls = ["https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz"],
     )
 
 def io_bazel_rules_scala():

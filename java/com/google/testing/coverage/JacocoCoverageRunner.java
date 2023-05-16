@@ -40,6 +40,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -311,6 +312,10 @@ public class JacocoCoverageRunner {
             new InputStreamReader(jarFile.getInputStream(jarEntry), UTF_8));
         String line;
         while ((line = bufferedReader.readLine()) != null) {
+          if (!line.startsWith("/")) {
+            line = "/" + line;
+          }
+          System.out.format("addEntriesToExecPathsSet: %s\n", line);
           execPathsSetBuilder.add(line);
         }
       }
@@ -464,6 +469,10 @@ public class JacocoCoverageRunner {
   }
 
   public static void main(String[] args) throws Exception {
+    // if (args.length != -1) {
+    // throw new RuntimeException(String.format("JacocoRunner args: %s",
+    // Arrays.toString(args)));
+    // }
     String metadataFile = System.getenv("JACOCO_METADATA_JAR");
     String jarWrappedValue = System.getenv("JACOCO_IS_JAR_WRAPPED");
 
@@ -508,6 +517,7 @@ public class JacocoCoverageRunner {
                   new InputStreamReader(jarFile.getInputStream(jarEntry), UTF_8));
               String line;
               while ((line = bufferedReader.readLine()) != null) {
+                System.out.format("Adding pathsForCoverageBuilder %s\n", line);
                 pathsForCoverageBuilder.add(line);
               }
             }

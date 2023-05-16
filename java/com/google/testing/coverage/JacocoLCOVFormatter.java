@@ -13,15 +13,21 @@
 // limitations under the License.
 package com.google.testing.coverage;
 
+import com.google.testing.coverage.Trie;
+
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.ICounter;
@@ -42,6 +48,7 @@ import org.jacoco.report.ISourceFileLocator;
  * http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php
  */
 public class JacocoLCOVFormatter {
+  private static final Logger logger = Logger.getLogger(JacocoLCOVFormatter.class.getName());
 
   // Exec paths of the uninstrumented files that are being analyzed. This is
   // helpful for files in
@@ -60,10 +67,20 @@ public class JacocoLCOVFormatter {
   // file-paths).
   private final Optional<ImmutableSet<String>> execPathsOfUninstrumentedFiles;
 
+  // The path trie is used to
+  private final Trie execPathsOfUninstrumentedDirNamesTrie = new Trie();
+
   private static final String EXEC_PATH_DELIMITER = "///";
 
   public JacocoLCOVFormatter(ImmutableSet<String> execPathsOfUninstrumentedFiles) {
     this.execPathsOfUninstrumentedFiles = Optional.of(execPathsOfUninstrumentedFiles);
+    for (final String execPath : execPathsOfUninstrumentedFiles) {
+      final Path dir = Paths.get(execPath).getParent();
+      if (dir != null) {
+        execPathsOfUninstrumentedDirNamesTrie.insert(dir.toString());
+        logger.log(Level.INFO, "added dirname to trie: " + dir);
+      }
+    }
   }
 
   public JacocoLCOVFormatter() {
@@ -78,14 +95,22 @@ public class JacocoLCOVFormatter {
       private Map<String, ISourceFileCoverage> sourceToFileCoverage = new TreeMap<>();
 
       private String getExecPathForEntryName(String pkgName, String fileName) {
+        System.out.format("getExecPathForEntryName(pkgName: %s, fileName: %s)\n",
+            pkgName, fileName);
+        logger.log(Level.INFO, "getExecPathForEntryName: " + pkgName);
+
         final String classPath = pkgName + "/" + fileName;
         if (execPathsOfUninstrumentedFiles.isEmpty()) {
+          logger.log(Level.INFO,
+              "getExecPathForEntryName: execPathsOfUninstrumentedFiles.isEmpty (returning classpath): " + classPath);
           return classPath;
         }
 
         String matchingFileName = classPath.startsWith("/") ? classPath : "/" + classPath;
+        logger.log(Level.INFO, "getExecPathForEntryName: matchingFileName = " + matchingFileName);
+
         for (String execPath : execPathsOfUninstrumentedFiles.get()) {
-          final String baseName = Path.of(execPath).getFileName().toString();
+          logger.log(Level.INFO, " - check execPath = " + execPath);
 
           if (execPath.contains(EXEC_PATH_DELIMITER)) {
             String[] parts = execPath.split(EXEC_PATH_DELIMITER, 2);
@@ -100,11 +125,25 @@ public class JacocoLCOVFormatter {
           } else if (matchingFileName.equals("/" + execPath)) {
             return execPath;
           } else {
-            if (baseName.equals(fileName) && execPath.contains(pkgName)) {
-              return execPath;
+            final String baseName = Path.of(execPath).getFileName().toString();
+            logger.log(Level.INFO, " --- baseName = " + baseName);
+            logger.log(Level.INFO, " --- pkgName = " + pkgName);
+
+            if (baseName.equals(fileName)) {
+              logger.log(Level.INFO, " --- baseName match! " + baseName);
+              if (execPath.contains(pkgName)) {
+                return execPath;
+              } else {
+                logger.log(Level.INFO, " --- execPath fail: " + execPath);
+              }
+            } else {
+              logger.log(Level.INFO, " --- baseName fail: " + baseName);
             }
           }
         }
+
+        logger.log(Level.INFO, "getExecPathForEntryName: " + pkgName + " (failed to match, return null)");
+
         return null;
       }
 

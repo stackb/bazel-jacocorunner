@@ -93,7 +93,6 @@ public class Main {
         gcovCoverage,
         gcovJsonCoverage);
 
-
     if (flags.sourcesToReplaceFile() != null) {
       coverage.maybeReplaceSourceFileNames(getMapFromFile(flags.sourcesToReplaceFile()));
     }
@@ -164,8 +163,6 @@ public class Main {
       coverage = Coverage.getOnlyTheseSources(
           coverage, getSourcesFromSourceFileManifest(flags.sourceFileManifest()));
     }
-
-
 
     if (coverage.isEmpty()) {
       try {
@@ -328,7 +325,7 @@ public class Main {
     Coverage coverage = new Coverage();
     for (File file : files) {
       try {
-        logger.log(Level.INFO, "Parsing file " + file);
+        logger.log(Level.INFO, "Parsing sequentially file " + file);
         List<SourceFileCoverage> sourceFilesCoverage = parser.parse(new FileInputStream(file));
         for (SourceFileCoverage sourceFileCoverage : sourceFilesCoverage) {
           coverage.add(sourceFileCoverage);

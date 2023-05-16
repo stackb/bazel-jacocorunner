@@ -26,6 +26,7 @@ java_library(
     ],
     deps = [
         ":bitfield",
+        ":trie",
         "@jacoco_maven//:com_google_guava_guava",
         "@jacoco_maven//:org_jacoco_org_jacoco_core",
         "@jacoco_maven//:org_jacoco_org_jacoco_report",
@@ -40,6 +41,18 @@ java_library(
         "BitField.java",
         "IllegalStringException.java",
     ],
+)
+
+java_library(
+    name = "trie",
+    srcs = ["Trie.java"],
+)
+
+java_test(
+    name = "trie_test",
+    srcs = ["TestTrie.java"],
+    test_class = "com.google.testing.coverage.TestTrie",
+    deps = [":trie"],
 )
 
 genrule(

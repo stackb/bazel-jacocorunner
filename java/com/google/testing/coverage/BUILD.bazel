@@ -4,6 +4,7 @@ java_binary(
     deps = [
         ":JacocoCoverageLib",
         ":bitfield",
+        ":features",
         "@jacoco_maven//:com_google_guava_guava",
         "@jacoco_maven//:org_jacoco_org_jacoco_agent",
         "@jacoco_maven//:org_jacoco_org_jacoco_core",
@@ -40,6 +41,19 @@ java_library(
         "BitField.java",
         "IllegalStringException.java",
     ],
+)
+
+java_library(
+    name = "features",
+    srcs = ["JacocoCoverageFeatures.java"],
+    deps = ["@jacoco_maven//:com_google_guava_guava"],
+)
+
+java_test(
+    name = "features_test",
+    srcs = ["TestJacocoCoverageFeatures.java"],
+    test_class = "com.google.testing.coverage.TestJacocoCoverageFeatures",
+    deps = [":features"],
 )
 
 genrule(

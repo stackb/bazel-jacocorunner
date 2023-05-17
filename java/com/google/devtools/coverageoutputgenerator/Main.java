@@ -93,7 +93,6 @@ public class Main {
         gcovCoverage,
         gcovJsonCoverage);
 
-
     if (flags.sourcesToReplaceFile() != null) {
       coverage.maybeReplaceSourceFileNames(getMapFromFile(flags.sourcesToReplaceFile()));
     }
@@ -164,8 +163,6 @@ public class Main {
       coverage = Coverage.getOnlyTheseSources(
           coverage, getSourcesFromSourceFileManifest(flags.sourceFileManifest()));
     }
-
-
 
     if (coverage.isEmpty()) {
       try {

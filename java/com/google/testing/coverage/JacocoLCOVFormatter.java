@@ -17,11 +17,15 @@ import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.ICounter;
@@ -42,6 +46,7 @@ import org.jacoco.report.ISourceFileLocator;
  * http://ltp.sourceforge.net/coverage/lcov/geninfo.1.php
  */
 public class JacocoLCOVFormatter {
+  private static final Logger logger = Logger.getLogger(JacocoLCOVFormatter.class.getName());
 
   // Exec paths of the uninstrumented files that are being analyzed. This is
   // helpful for files in
@@ -78,21 +83,23 @@ public class JacocoLCOVFormatter {
       private Map<String, ISourceFileCoverage> sourceToFileCoverage = new TreeMap<>();
 
       private String getExecPathForEntryName(String pkgName, String fileName) {
+
         final String classPath = pkgName + "/" + fileName;
         if (execPathsOfUninstrumentedFiles.isEmpty()) {
           return classPath;
         }
 
         String matchingFileName = classPath.startsWith("/") ? classPath : "/" + classPath;
-        for (String execPath : execPathsOfUninstrumentedFiles.get()) {
-          final String baseName = Path.of(execPath).getFileName().toString();
+
+        for (final String execPath : execPathsOfUninstrumentedFiles.get()) {
 
           if (execPath.contains(EXEC_PATH_DELIMITER)) {
             String[] parts = execPath.split(EXEC_PATH_DELIMITER, 2);
             if (parts.length != 2) {
               continue;
             }
-            if (parts[1].equals(matchingFileName)) {
+            final boolean matched = parts[1].equals(matchingFileName);
+            if (matched) {
               return parts[0];
             }
           } else if (execPath.endsWith(matchingFileName)) {
@@ -100,11 +107,13 @@ public class JacocoLCOVFormatter {
           } else if (matchingFileName.equals("/" + execPath)) {
             return execPath;
           } else {
+            final String baseName = Path.of(execPath).getFileName().toString();
             if (baseName.equals(fileName) && execPath.contains(pkgName)) {
               return execPath;
             }
           }
         }
+
         return null;
       }
 

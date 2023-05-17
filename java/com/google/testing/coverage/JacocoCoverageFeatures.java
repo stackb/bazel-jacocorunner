@@ -1,4 +1,4 @@
-// Copyright 2016 The Bazel Authors. All Rights Reserved.
+// Copyright 2023 Stack.Build LLC. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,6 +28,30 @@ public class JacocoCoverageFeatures {
     private JacocoCoverageFeatures() {
     }
 
+    /**
+     * wantRemapSrcTestPaths returns true if the environment has an entry like
+     * "JACOCO_REMAP_SRC_TEST_PATHS=1".
+     * 
+     * @return true if enabled.
+     */
+    static boolean wantRemapSrcTestPaths() {
+        final String value = System.getenv(JACOCO_REMAP_SRC_TEST_PATHS_FEATURE_NAME);
+        final boolean wantFeatureRemapSrcTestPaths = value != null ? !value.equals("0")
+                : false;
+        return wantFeatureRemapSrcTestPaths;
+    }
+
+    /**
+     * remapSrcTestPaths takes a path like "path/to/dir/Foo.java" and a
+     * delimiter to split on. If the delimiter matches, it is removed form the
+     * path and added as a mapping entry.
+     * 
+     * @see addEntriesToExecPathsSet.
+     * 
+     * @param path
+     * @param delim
+     * @param pathsForCoverageBuilder
+     */
     @VisibleForTesting
     static void remapSrcTestPaths(
             final String path,

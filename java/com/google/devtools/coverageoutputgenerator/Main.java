@@ -325,7 +325,7 @@ public class Main {
     Coverage coverage = new Coverage();
     for (File file : files) {
       try {
-        logger.log(Level.INFO, "Parsing sequentially file " + file);
+        logger.log(Level.INFO, "Parsing file " + file);
         List<SourceFileCoverage> sourceFilesCoverage = parser.parse(new FileInputStream(file));
         for (SourceFileCoverage sourceFileCoverage : sourceFilesCoverage) {
           coverage.add(sourceFileCoverage);

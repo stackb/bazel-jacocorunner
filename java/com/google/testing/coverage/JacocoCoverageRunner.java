@@ -40,7 +40,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -316,7 +315,6 @@ public class JacocoCoverageRunner {
         }
       }
     }
-
   }
 
   private static Class<?> getMainClass(boolean insideDeployJar) throws Exception {
@@ -468,9 +466,8 @@ public class JacocoCoverageRunner {
   public static void main(String[] args) throws Exception {
     String metadataFile = System.getenv("JACOCO_METADATA_JAR");
     String jarWrappedValue = System.getenv("JACOCO_IS_JAR_WRAPPED");
-    String remapSrcTestPathsValue = System.getenv(JacocoCoverageFeatures.JACOCO_REMAP_SRC_TEST_PATHS_FEATURE_NAME);
     boolean wasWrappedJar = jarWrappedValue != null ? !jarWrappedValue.equals("0") : false;
-    boolean wantFeatureRemapSrcTestPaths = remapSrcTestPathsValue != null ? !remapSrcTestPathsValue.equals("0") : false;
+    final boolean wantFeatureRemapSrcTestPaths = JacocoCoverageFeatures.wantRemapSrcTestPaths();
 
     File[] metadataFiles = null;
     int deployJars = 0;

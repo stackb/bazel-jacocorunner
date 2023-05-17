@@ -312,14 +312,11 @@ public class JacocoCoverageRunner {
             new InputStreamReader(jarFile.getInputStream(jarEntry), UTF_8));
         String line;
         while ((line = bufferedReader.readLine()) != null) {
-          if (!line.startsWith("/")) {
-            line = "/" + line;
-          }
-          System.out.format("addEntriesToExecPathsSet: %s\n", line);
           execPathsSetBuilder.add(line);
         }
       }
     }
+
   }
 
   private static Class<?> getMainClass(boolean insideDeployJar) throws Exception {
@@ -469,14 +466,11 @@ public class JacocoCoverageRunner {
   }
 
   public static void main(String[] args) throws Exception {
-    // if (args.length != -1) {
-    // throw new RuntimeException(String.format("JacocoRunner args: %s",
-    // Arrays.toString(args)));
-    // }
     String metadataFile = System.getenv("JACOCO_METADATA_JAR");
     String jarWrappedValue = System.getenv("JACOCO_IS_JAR_WRAPPED");
-
+    String remapSrcTestPathsValue = System.getenv(JacocoCoverageFeatures.JACOCO_REMAP_SRC_TEST_PATHS_FEATURE_NAME);
     boolean wasWrappedJar = jarWrappedValue != null ? !jarWrappedValue.equals("0") : false;
+    boolean wantFeatureRemapSrcTestPaths = remapSrcTestPathsValue != null ? !remapSrcTestPathsValue.equals("0") : false;
 
     File[] metadataFiles = null;
     int deployJars = 0;
@@ -517,8 +511,11 @@ public class JacocoCoverageRunner {
                   new InputStreamReader(jarFile.getInputStream(jarEntry), UTF_8));
               String line;
               while ((line = bufferedReader.readLine()) != null) {
-                System.out.format("Adding pathsForCoverageBuilder %s\n", line);
                 pathsForCoverageBuilder.add(line);
+                if (wantFeatureRemapSrcTestPaths) {
+                  JacocoCoverageFeatures.remapSrcTestPaths(line, "/src/", pathsForCoverageBuilder);
+                  JacocoCoverageFeatures.remapSrcTestPaths(line, "/test/", pathsForCoverageBuilder);
+                }
               }
             }
           }
@@ -527,6 +524,7 @@ public class JacocoCoverageRunner {
     }
 
     final ImmutableSet<String> pathsForCoverage = pathsForCoverageBuilder.build();
+
     final String metadataFileFinal = metadataFile;
 
     final File[] metadataFilesFinal = metadataFiles;
@@ -607,12 +605,6 @@ public class JacocoCoverageRunner {
                     // isn't live. There's no coverage to report, but it's otherwise a successful
                     // invocation.
                     dataInputStream = new ByteArrayInputStream(new byte[0]);
-                    // throw new IOException(
-                    // String.format(
-                    // "nul dataInputStream! (pathsForCoverage=%s, metadataFile=%s)",
-                    // pathsForCoverage,
-                    // metadataFileFinal),
-                    // e);
                   }
 
                   if (metadataFileFinal != null || metadataFilesFinal != null) {
@@ -626,10 +618,8 @@ public class JacocoCoverageRunner {
                               .toArray(new File[0]);
                     }
                     if (uninstrumentedClasses.isEmpty()) {
-
                       new JacocoCoverageRunner(dataInputStream, coverageReportDat, metadataJars)
                           .create();
-                      // throw new IOException("uninstrumentedClasses is empty!");
                     } else {
                       new JacocoCoverageRunner(
                           dataInputStream,

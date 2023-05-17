@@ -13,8 +13,6 @@
 // limitations under the License.
 package com.google.testing.coverage;
 
-import com.google.testing.coverage.Trie;
-
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -67,20 +65,10 @@ public class JacocoLCOVFormatter {
   // file-paths).
   private final Optional<ImmutableSet<String>> execPathsOfUninstrumentedFiles;
 
-  // The path trie is used to
-  private final Trie execPathsOfUninstrumentedDirNamesTrie = new Trie();
-
   private static final String EXEC_PATH_DELIMITER = "///";
 
   public JacocoLCOVFormatter(ImmutableSet<String> execPathsOfUninstrumentedFiles) {
     this.execPathsOfUninstrumentedFiles = Optional.of(execPathsOfUninstrumentedFiles);
-    for (final String execPath : execPathsOfUninstrumentedFiles) {
-      final Path dir = Paths.get(execPath).getParent();
-      if (dir != null) {
-        execPathsOfUninstrumentedDirNamesTrie.insert(dir.toString());
-        logger.log(Level.INFO, "added dirname to trie: " + dir);
-      }
-    }
   }
 
   public JacocoLCOVFormatter() {
@@ -95,29 +83,23 @@ public class JacocoLCOVFormatter {
       private Map<String, ISourceFileCoverage> sourceToFileCoverage = new TreeMap<>();
 
       private String getExecPathForEntryName(String pkgName, String fileName) {
-        System.out.format("getExecPathForEntryName(pkgName: %s, fileName: %s)\n",
-            pkgName, fileName);
-        logger.log(Level.INFO, "getExecPathForEntryName: " + pkgName);
 
         final String classPath = pkgName + "/" + fileName;
         if (execPathsOfUninstrumentedFiles.isEmpty()) {
-          logger.log(Level.INFO,
-              "getExecPathForEntryName: execPathsOfUninstrumentedFiles.isEmpty (returning classpath): " + classPath);
           return classPath;
         }
 
         String matchingFileName = classPath.startsWith("/") ? classPath : "/" + classPath;
-        logger.log(Level.INFO, "getExecPathForEntryName: matchingFileName = " + matchingFileName);
 
-        for (String execPath : execPathsOfUninstrumentedFiles.get()) {
-          logger.log(Level.INFO, " - check execPath = " + execPath);
+        for (final String execPath : execPathsOfUninstrumentedFiles.get()) {
 
           if (execPath.contains(EXEC_PATH_DELIMITER)) {
             String[] parts = execPath.split(EXEC_PATH_DELIMITER, 2);
             if (parts.length != 2) {
               continue;
             }
-            if (parts[1].equals(matchingFileName)) {
+            final boolean matched = parts[1].equals(matchingFileName);
+            if (matched) {
               return parts[0];
             }
           } else if (execPath.endsWith(matchingFileName)) {
@@ -126,23 +108,11 @@ public class JacocoLCOVFormatter {
             return execPath;
           } else {
             final String baseName = Path.of(execPath).getFileName().toString();
-            logger.log(Level.INFO, " --- baseName = " + baseName);
-            logger.log(Level.INFO, " --- pkgName = " + pkgName);
-
-            if (baseName.equals(fileName)) {
-              logger.log(Level.INFO, " --- baseName match! " + baseName);
-              if (execPath.contains(pkgName)) {
-                return execPath;
-              } else {
-                logger.log(Level.INFO, " --- execPath fail: " + execPath);
-              }
-            } else {
-              logger.log(Level.INFO, " --- baseName fail: " + baseName);
+            if (baseName.equals(fileName) && execPath.contains(pkgName)) {
+              return execPath;
             }
           }
         }
-
-        logger.log(Level.INFO, "getExecPathForEntryName: " + pkgName + " (failed to match, return null)");
 
         return null;
       }
